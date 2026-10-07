@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail — Media Center HST</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div id="loadingPage" class="loading-page">
+    <div class="loading-content">
+      <div class="loading-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h2>Media Center HST</h2>
+      <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Memuat...</p>
+    </div>
+  </div>
+
+  <div id="progressBar" class="progress-bar"></div>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+        <div>
+          <h1>Media Center HST</h1>
+          <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="jamRealtime" class="jam-realtime">Memuat...</div>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="berita.html">Berita</a>
+          <a href="klarifikasi.html">Klarifikasi</a>
+          <a href="statistik.html">Statistik</a>
+          <a href="profil.html">Profil</a>
+          <button id="toggleDark" class="dark-toggle" title="Ganti Tema">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <a href="berita.html" class="btn-kembali" id="btnKembali">← Kembali</a>
+    <article id="detailBerita" class="detail-berita">
+      <p style="text-align:center;padding:40px;color:#94a3b8;">⏳ Memuat...</p>
+    </article>
+
+    <div class="rating-section" id="ratingSection" style="display:none;">
+      <h4>⭐ Beri Rating Berita Ini</h4>
+      <div class="rating-stars" id="ratingStars">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+      </div>
+      <p class="rating-info" id="ratingInfo">Belum ada rating. Jadi yang pertama!</p>
+    </div>
+
+    <section class="berita-terkait-section">
+      <h2 class="berita-terkait-title">📰 Berita Terkait</h2>
+      <div class="berita-grid" id="beritaTerkait">
+        <p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:20px;">Memuat...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps?q=Dinas+Komunikasi+dan+Informatika+Kabupaten+Hulu+Sungai+Tengah&output=embed" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2025 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
+    </div>
+  </footer>
+
+  <script src="js/tidb.js"></script>
+  <script>
+    // ============================================
+    // HELPER
+    // ============================================
+    function stripHTML(html) {
+      if (!html) return '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // ============================================
+// RATING — pakai API + TiDB
+// ============================================
+async function tampilkanRating(id) {
+  const section = document.getElementById('ratingSection');
+  const stars = document.querySelectorAll('#ratingStars span');
+  const info = document.getElementById('ratingInfo');
+  if (!section) return;
+
+  section.style.display = 'block';
+
+  try {
+    const res = await fetch(`/api/rating/${id}`);
+    const data = await res.json();
+    const rata = data.rata || 0;
+
+    if (data.jumlah === 0) {
+      info.innerHTML = 'Belum ada rating. Jadi yang pertama!';
+    } else {
+      info.innerHTML = `⭐ Rata-rata: <strong>${rata}</strong> / 5 dari ${data.jumlah} penilaian`;
+    }
+  } catch (err) {
+    info.textContent = 'Gagal memuat rating.';
+  }
+}
+
+function pasangRating(id) {
+  const stars = document.querySelectorAll('#ratingStars span');
+  const info = document.getElementById('ratingInfo');
+
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const val = Number(star.dataset.value);
+      stars.forEach(s => {
+        s.style.color = Number(s.dataset.value) <= val ? 'var(--neon-yellow, #facc15)' : '';
+      });
+    });
+
+    star.addEventListener('click', async () => {
+      const nilai = Number(star.dataset.value);
+
+      try {
+        const res = await fetch('/api/rating', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_berita: id, nilai }),
+        });
+        const data = await res.json();
+
+        info.innerHTML = `⭐ Rata-rata: <strong>${data.rata}</strong> / 5 dari ${data.jumlah} penilaian ✅ Terima kasih!`;
+        stars.forEach(s => {
+          s.classList.toggle('active', Number(s.dataset.value) <= nilai);
+        });
+      } catch (err) {
+        alert('Gagal kirim rating: ' + err.message);
+      }
+    });
+  });
+
+  document.getElementById('ratingStars').addEventListener('mouseleave', () => {
+    stars.forEach(s => s.style.color = '');
+  });
+}
+
+    // ============================================
+    // RENDER DETAIL
+    // ============================================
+    function renderDetail(item) {
+      const container = document.getElementById('detailBerita');
+      if (!container) return;
+
+      const foto = item.foto || item.gambar || '';
+      const gambar = window.urlGambar ? window.urlGambar('berita', foto) : null;
+      const judul = item.title || item.judul || 'Tanpa Judul';
+      const kategori = item.kategori_id || item.kategori || 'Umum';
+      const tanggal = window.formatTanggalJam
+        ? window.formatTanggalJam(item.tanggal)
+        : item.tanggal;
+
+      container.innerHTML = `
+        <span class="badge">${escapeHTML(kategori)}</span>
+        <h1>${escapeHTML(judul)}</h1>
+        <p class="detail-meta">${tanggal}${item.author ? ' · ' + escapeHTML(item.author) : ''}</p>
+        ${gambar ? `<div class="detail-thumb"><img src="${gambar}" alt="${escapeHTML(judul)}"></div>` : ''}
+        <div class="detail-isi">${item.isi || '<p><em>(Tidak ada isi)</em></p>'}</div>
+        <div class="detail-aksi">
+          <a class="btn-share-wa"
+             href="https://wa.me/?text=${encodeURIComponent(judul + ' — ' + window.location.href)}"
+             target="_blank" rel="noopener">
+            Bagikan via WhatsApp
+          </a>
+        </div>
+      `;
+
+      document.title = judul + ' — Media Center HST';
+    }
+
+    // ============================================
+    // RENDER BERITA TERKAIT
+    // ============================================
+    async function renderTerkait(item) {
+      const container = document.getElementById('beritaTerkait');
+      if (!container) return;
+
+      try {
+        const kategori = item.kategori_id || item.kategori || '';
+        let terkait = await apiGetBeritaPaged({ per_page: 4, kategori });
+
+        // Buang yang sama dengan yang sekarang
+        terkait = terkait.filter(b => String(b.id) !== String(item.id)).slice(0, 3);
+
+        // Kalau kurang dari 3, ambil yang terbaru
+        if (terkait.length < 3) {
+          const tambahan = await apiGetBeritaPaged({ per_page: 6 });
+          const tambah = tambahan
+            .filter(b => String(b.id) !== String(item.id))
+            .filter(b => !terkait.find(t => t.id === b.id))
+            .slice(0, 3 - terkait.length);
+          terkait = terkait.concat(tambah);
+        }
+
+        if (terkait.length === 0) {
+          container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:20px;">Belum ada berita terkait.</p>';
+          return;
+        }
+
+        container.innerHTML = terkait.map(b => {
+          const foto = b.foto || b.gambar || '';
+          const gambar = window.urlGambar ? window.urlGambar('berita', foto) : '';
+          const judul = b.title || b.judul || '';
+          const kategori = b.kategori_id || b.kategori || 'Umum';
+          const id = b.id_berita || b.id;
+          const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
+
+          return `
+            <article class="berita-card">
+              <div class="berita-thumb"><img src="${gambar}" alt="${escapeHTML(judul)}" loading="lazy"></div>
+              <div class="berita-body">
+                <span class="badge">${escapeHTML(kategori)}</span>
+                <h3>${escapeHTML(judul)}</h3>
+                <p class="tanggal">${tanggal}</p>
+                <a href="berita-detail.html?id=${id}" class="btn-baca" style="margin-top:12px;">Baca</a>
+              </div>
+            </article>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Terkait error:', err);
+        container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:20px;">Gagal memuat berita terkait.</p>';
+      }
+    }
+
+    // ============================================
+    // INIT DETAIL
+    // ============================================
+    async function initDetail() {
+      const container = document.getElementById('detailBerita');
+      const loadingEl = document.getElementById('loadingPage');
+
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+
+      if (!id) {
+        container.innerHTML = `
+          <div class="not-found">
+            <h2>Berita tidak ditemukan</h2>
+            <p>Parameter <code>?id=</code> tidak ada di URL.</p>
+            <a href="berita.html" class="btn-kembali">← Kembali ke Berita</a>
+          </div>`;
+        if (loadingEl) loadingEl.classList.add('hidden');
+        return;
+      }
+
+      try {
+        // Ambil berita dari TiDB by ID (cepat, cuma 1 query)
+        const item = await apiCariBeritaById(id);
+
+        if (!item) {
+          container.innerHTML = `
+            <div class="not-found">
+              <h2>Berita tidak ditemukan</h2>
+              <p>Berita dengan ID <strong>${escapeHTML(id)}</strong> tidak ada di arsip.</p>
+              <a href="berita.html" class="btn-kembali">← Kembali ke Berita</a>
+            </div>`;
+          if (loadingEl) loadingEl.classList.add('hidden');
+          return;
+        }
+
+        renderDetail(item);
+        renderTerkait(item);
+        tampilkanRating(id);
+        pasangRating(id);
+
+        // Increment views (sekali per sesi browser)
+        const keyView = `view_${id}`;
+        if (!sessionStorage.getItem(keyView)) {
+        fetch(`/api/berita/${id}/view`, { method: 'POST' })
+        .then(() => sessionStorage.setItem(keyView, 'true'))
+        .catch(err => console.warn('View increment gagal:', err.message));
+}
+
+      } catch (err) {
+        console.error('❌ Error:', err);
+        if (container) {
+          container.innerHTML = `
+            <div class="not-found">
+              <h2>Gagal memuat berita</h2>
+              <p>${escapeHTML(err.message)}</p>
+              <a href="berita.html" class="btn-kembali">← Kembali</a>
+            </div>`;
+        }
+      } finally {
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+
+    initDetail();
+    // Jam, progress bar, dark mode di-handle oleh js/tidb.js
+  </script>
+</body>
+</html>

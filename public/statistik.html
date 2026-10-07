@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistik — Media Center HST</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .grafik-card canvas { max-height: 300px; min-height: 260px; width: 100% !important; }
+    .tabel-section { min-height: 400px; }
+    .table-wrap { min-height: 300px; max-height: 600px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <div id="loadingPage" class="loading-page">
+    <div class="loading-content">
+      <div class="loading-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h2>Media Center HST</h2>
+      <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Memuat halaman...</p>
+    </div>
+  </div>
+
+  <div id="progressBar" class="progress-bar"></div>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+        <div>
+          <h1>Media Center HST</h1>
+          <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="jamRealtime" class="jam-realtime">Memuat...</div>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="berita.html">Berita</a>
+          <a href="klarifikasi.html">Klarifikasi</a>
+          <a href="statistik.html" class="active">Statistik</a>
+          <a href="profil.html">Profil</a>
+          <button id="toggleDark" class="dark-toggle" title="Ganti Tema">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 style="margin: 32px 0 8px;">📊 Statistik Media Center</h2>
+    <p style="color: #64748b; margin-bottom: 24px;">Ringkasan data berita dan aktivitas Media Center HST.</p>
+
+    <section class="statistik statistik-page" style="margin: 0 0 32px; padding: 0;">
+      <div class="stat-card"><h3 id="statTotalBerita">...</h3><p>Total Berita</p></div>
+      <div class="stat-card"><h3 id="statTotalKlarifikasi">...</h3><p>Klarifikasi</p></div>
+      <div class="stat-card"><h3 id="statTotalKategori">...</h3><p>Kategori</p></div>
+      <div class="stat-card"><h3 id="statPengunjung">...</h3><p>Pengunjung</p></div>
+    </section>
+
+    <section class="grafik-section">
+      <div class="grafik-card"><h3>📊 Jumlah Berita per Kategori</h3><canvas id="chartBar"></canvas></div>
+      <div class="grafik-card"><h3>🥧 Proporsi Kategori</h3><canvas id="chartDoughnut"></canvas></div>
+    </section>
+
+    <section class="tabel-section">
+      <h3>📋 100 Berita Terbaru</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>No</th><th>Judul</th><th>Kategori</th><th>Tanggal</th></tr></thead>
+          <tbody id="tabelStatistik"><tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:20px;">⏳ Memuat data...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps?q=Dinas+Komunikasi+dan+Informatika+Kabupaten+Hulu+Sungai+Tengah&output=embed" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2025 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
+    </div>
+  </footer>
+
+  <script src="js/tidb.js"></script>
+  <script>
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function renderChartBar(dataPerKategori) {
+      const ctx = document.getElementById('chartBar').getContext('2d');
+      const warna = ['#06b6d4', '#d946ef', '#facc15', '#ec4899', '#a855f7', '#10b981', '#f59e0b', '#ef4444'];
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(dataPerKategori),
+          datasets: [{
+            label: 'Jumlah Berita',
+            data: Object.values(dataPerKategori),
+            backgroundColor: warna.slice(0, Object.keys(dataPerKategori).length),
+            borderRadius: 8,
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+      });
+    }
+
+    function renderChartDoughnut(dataPerKategori) {
+      const ctx = document.getElementById('chartDoughnut').getContext('2d');
+      const warna = ['#06b6d4', '#d946ef', '#facc15', '#ec4899', '#a855f7', '#10b981', '#f59e0b', '#ef4444'];
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(dataPerKategori),
+          datasets: [{ data: Object.values(dataPerKategori), backgroundColor: warna.slice(0, Object.keys(dataPerKategori).length) }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      });
+    }
+
+    function renderTabel(list) {
+      const tbody = document.getElementById('tabelStatistik');
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:20px;">Belum ada berita.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = list.map((b, i) => {
+        const judul = b.title || b.judul || '';
+        const kategori = b.kategori_id || b.kategori || 'Umum';
+        const id = b.id_berita || b.id;
+        const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
+        return `
+          <tr>
+            <td>${i + 1}</td>
+            <td><a href="berita-detail.html?id=${id}" style="color:inherit;">${escapeHTML(judul)}</a></td>
+            <td><span class="badge">${escapeHTML(kategori)}</span></td>
+            <td>${tanggal}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function init() {
+      try {
+        // Ambil 100 berita terbaru dari TiDB
+        const list100 = await apiGetBeritaPaged({ per_page: 100 });
+        console.log('✅ Loaded', list100.length, 'berita');
+
+        // Statistik total
+        const totalBerita = document.getElementById('statTotalBerita');
+        if (totalBerita) totalBerita.textContent = '1.356';
+        const totalKlarifikasi = document.getElementById('statTotalKlarifikasi');
+        if (totalKlarifikasi) totalKlarifikasi.textContent = '121';
+
+        // Hitung per kategori dari 100 terbaru
+        const dataPerKategori = {};
+        list100.forEach(b => {
+          const k = b.kategori_id || b.kategori || 'Umum';
+          dataPerKategori[k] = (dataPerKategori[k] || 0) + 1;
+        });
+
+        const kategoriUnik = Object.keys(dataPerKategori).length;
+        const statKategori = document.getElementById('statTotalKategori');
+        if (statKategori) statKategori.textContent = kategoriUnik;
+
+        // Chart
+        renderChartBar(dataPerKategori);
+        renderChartDoughnut(dataPerKategori);
+
+        // Tabel
+        renderTabel(list100);
+
+        // Pengunjung
+        try {
+          const jumlah = await apiIncrementPengunjung();
+          const el = document.getElementById('statPengunjung');
+          if (el) el.textContent = (jumlah || 0).toLocaleString('id-ID');
+        } catch (e) {
+          const el = document.getElementById('statPengunjung');
+          if (el) el.textContent = '—';
+        }
+
+      } catch (err) {
+        console.error('❌ Error:', err);
+        document.getElementById('tabelStatistik').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#ef4444;padding:20px;">Gagal memuat data.</td></tr>';
+      } finally {
+        const loadingEl = document.getElementById('loadingPage');
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Center HST — Portal Informasi Publik</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <div id="loadingPage" class="loading-page">
+    <div class="loading-content">
+      <div class="loading-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h2>Media Center HST</h2>
+      <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Memuat halaman...</p>
+    </div>
+  </div>
+
+  <div id="progressBar" class="progress-bar"></div>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+        <div>
+          <h1>Media Center HST</h1>
+          <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="jamRealtime" class="jam-realtime">Memuat...</div>
+        <nav>
+          <a href="index.html" class="active">Home</a>
+          <a href="berita.html">Berita</a>
+          <a href="klarifikasi.html">Klarifikasi</a>
+          <a href="statistik.html">Statistik</a>
+          <a href="profil.html">Profil</a>
+          <button id="toggleDark" class="dark-toggle" title="Ganti Tema">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-slides">
+      <div class="hero-slide active" style="background-image: url('img/hero1.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('img/hero2.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('img/hero3.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('img/hero4.jpg');"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h2 id="heroTitle">Portal Informasi Resmi Pemerintah Daerah</h2>
+      <p id="heroDesc">Informasi cepat, akurat, dan transparan untuk masyarakat Hulu Sungai Tengah.</p>
+      <a href="berita.html" class="hero-btn">Selengkapnya →</a>
+    </div>
+    <div class="hero-dots">
+      <button class="hero-dot active" data-slide="0"></button>
+      <button class="hero-dot" data-slide="1"></button>
+      <button class="hero-dot" data-slide="2"></button>
+      <button class="hero-dot" data-slide="3"></button>
+    </div>
+  </section>
+
+  <section class="statistik" id="statistik">
+    <div class="stat-card"><h3 id="totalBerita">0</h3><p>Total Berita</p></div>
+    <div class="stat-card"><h3 id="totalKlarifikasi">0</h3><p>Klarifikasi</p></div>
+    <div class="stat-card"><h3 id="totalPengunjung">0</h3><p>Pengunjung</p></div>
+  </section>
+
+  <section class="berita-section">
+    <div class="section-header">
+      <h2>📰 Berita Terbaru</h2>
+      <a href="berita.html" class="link-semua">Lihat Semua →</a>
+    </div>
+    <div class="berita-grid" id="beritaTerbaru"></div>
+  </section>
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h3>🌤️ Cuaca Barabai</h3>
+      <div id="cuacaWidget">
+        <p style="color:#94a3b8;font-size:0.85rem;">Memuat cuaca...</p>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <h3>🔥 Berita Populer</h3>
+      <ul class="populer-list" id="beritaPopuler"><li style="color:#94a3b8;">Memuat...</li></ul>
+    </div>
+    <div class="sidebar-card">
+      <h3>📻 Radio Pemerintah Daerah</h3>
+      <p>Streaming Radio HST</p>
+      <audio controls><source src="" type="audio/mpeg"></audio>
+    </div>
+    <div class="sidebar-card">
+      <h3>🔗 Media Sosial Resmi</h3>
+      <ul class="sosmed-list">
+        <li><a href="https://instagram.com/mediacenterhst" target="_blank">Instagram</a></li>
+        <li><a href="https://facebook.com/mediacenterhst" target="_blank">Facebook</a></li>
+        <li><a href="https://tiktok.com/@mediacenterhst" target="_blank">TikTok</a></li>
+        <li><a href="https://youtube.com/mediacenterhst" target="_blank">YouTube</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps?q=Dinas+Komunikasi+dan+Informatika+Kabupaten+Hulu+Sungai+Tengah&output=embed" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2025 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
+    </div>
+  </footer>
+
+  <script src="js/tidb.js"></script>
+  <script>
+    // ============================================
+    // HOME — Load berita terbaru dari TiDB (cepat)
+    // ============================================
+    async function initHome() {
+      const container = document.getElementById('beritaTerbaru');
+
+      try {
+        // 1. Ambil 3 berita terbaru dari TiDB
+        const terbaru = await apiGetBeritaPaged({ per_page: 3 });
+        console.log('✅ Loaded', terbaru.length, 'berita dari TiDB');
+
+        const items = terbaru.slice(0, 3);
+
+        // 2. Render berita terbaru
+        if (items.length === 0) {
+          container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">Belum ada berita.</p>';
+        } else {
+          container.innerHTML = items.map(b => {
+            const foto = b.foto || b.gambar || '';
+            const gambar = window.urlGambar ? window.urlGambar('berita', foto) : null;
+            const judul = b.title || b.judul || 'Tanpa Judul';
+            const kategori = b.kategori_id || b.kategori || 'Umum';
+            const isi = (b.isi || '').replace(/<[^>]*>/g, '').slice(0, 150);
+            const id = b.id_berita || b.id;
+            const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
+
+            return `
+              <article class="berita-card">
+                <div class="berita-thumb">
+                  <img src="${gambar || ''}" alt="${judul}" loading="lazy">
+                </div>
+                <div class="berita-body">
+                  <span class="badge">${kategori}</span>
+                  <h3>${judul}</h3>
+                  <p class="tanggal">${tanggal}</p>
+                  <p class="ringkasan">${isi}...</p>
+                  <a href="berita-detail.html?id=${id}" class="btn-baca">Baca Selengkapnya</a>
+                </div>
+              </article>
+            `;
+          }).join('');
+        }
+
+        // 3. Statistik
+        const totalBerita = document.getElementById('totalBerita');
+        if (totalBerita) totalBerita.textContent = '1.356';
+
+        const totalKlarifikasi = document.getElementById('totalKlarifikasi');
+        if (totalKlarifikasi) totalKlarifikasi.textContent = '121';
+
+        try {
+          const stat = await apiGetStatistik();
+          const totalPengunjung = document.getElementById('totalPengunjung');
+          if (totalPengunjung) totalPengunjung.textContent = (stat.total || 0).toLocaleString('id-ID');
+        } catch (e) { /* diamkan */ }
+
+        // 4. Berita Populer — dari /api/berita-populer (by views)
+        const populerList = document.getElementById('beritaPopuler');
+        if (populerList) {
+          try {
+            const populer = await fetch('/api/berita-populer?limit=5').then(r => r.json());
+
+            if (populer && populer.length > 0) {
+              populerList.innerHTML = populer.map((b, i) => `
+                <li>
+                  <span class="populer-num">${i + 1}</span>
+                  <a href="berita-detail.html?id=${b.id_berita || b.id}">${b.title || b.judul}</a>
+                  <small style="color:#94a3b8;font-size:0.75rem;display:block;margin-left:30px;">${b.views} kali dibaca</small>
+                </li>
+              `).join('');
+            } else {
+              // Fallback: kalau belum ada views, tampilkan 3 terbaru
+              populerList.innerHTML = items.map((b, i) => `
+                <li>
+                  <span class="populer-num">${i + 1}</span>
+                  <a href="berita-detail.html?id=${b.id_berita || b.id}">${b.title || b.judul}</a>
+                  <small style="color:#94a3b8;font-size:0.75rem;display:block;margin-left:30px;">Baru ditambahkan</small>
+                </li>
+              `).join('');
+            }
+          } catch (err) {
+            console.warn('⚠️ Populer gagal:', err.message);
+          }
+        }
+
+      } catch (err) {
+        console.error('❌ Error:', err);
+        if (container) {
+          container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Gagal memuat data. Cek server.</p>';
+        }
+      }
+    }
+    initHome();
+  </script>
+
+  <!-- Floating Menu Kanan -->
+  
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Admin — Media Center HST</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <button id="toggleDark" class="dark-toggle login-dark-toggle" title="Ganti Tema">🌙</button>
+
+  <div class="login-wrapper">
+    <div class="login-box">
+      <div class="login-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h1>Login Admin</h1>
+      <p>Media Center HST — Panel Administrator</p>
+
+      <form id="loginForm">
+        <div class="login-field">
+          <label>Username</label>
+          <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
+        </div>
+        <div class="login-field">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Masukkan password" required>
+        </div>
+        <button type="submit" class="btn-login">Masuk →</button>
+        <p id="loginError" class="login-error"></p>
+      </form>
+
+      <a href="index.html" class="login-back">← Kembali ke Beranda</a>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // DARK MODE TOGGLE (Default: DARK)
+    // ============================================
+    (function() {
+      const saved = localStorage.getItem('darkMode');
+      
+      if (saved === 'false') {
+        document.body.classList.add('light-mode');
+      } else {
+        document.body.classList.remove('light-mode');
+        if (saved === null) localStorage.setItem('darkMode', 'true');
+      }
+
+      const btn = document.getElementById('toggleDark');
+      if (btn) {
+        updateIcon(btn);
+        btn.addEventListener('click', function() {
+          document.body.classList.toggle('light-mode');
+          const isLight = document.body.classList.contains('light-mode');
+          localStorage.setItem('darkMode', isLight ? 'false' : 'true');
+          updateIcon(this);
+        });
+      }
+
+      function updateIcon(btn) {
+        const isLight = document.body.classList.contains('light-mode');
+        btn.textContent = isLight ? '🌙' : '☀️';
+      }
+    })();
+
+    // ============================================
+    // TANDAI KLIK MENU INTERNAL
+    // ============================================
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('a');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      if (!href) return;
+      if (href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto')) return;
+      if (link.target === '_blank') return;
+      sessionStorage.setItem('dariKlikMenu', 'true');
+    });
+
+    // ============================================
+    // LOGIN LOGIC
+    // ============================================
+    const USERNAME = 'admin';
+    const PASSWORD = 'admin123';
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const error = document.getElementById('loginError');
+
+      if (user === USERNAME && pass === PASSWORD) {
+        localStorage.setItem('isLogin', 'true');
+        localStorage.setItem('userLogin', user);
+        // Tandai sebagai klik menu (biar admin.html nggak muncul loading)
+        sessionStorage.setItem('dariKlikMenu', 'true');
+        window.location.href = 'admin.html';
+      } else {
+        error.textContent = '❌ Username atau password salah!';
+        error.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

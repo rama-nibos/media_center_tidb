@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil — Media Center HST</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ============================================
+       PROFIL PAGE — Layout 2 Kolom (Sidebar + Konten)
+       ============================================ */
+    .profil-wrapper {
+      max-width: 1320px;
+      margin: 32px auto 60px;
+      padding: 0 40px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* ===== SIDEBAR KIRI ===== */
+    .profil-sidebar {
+      position: sticky;
+      top: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .profil-sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--dark-card, #121212);
+      border: 1px solid var(--dark-border, #2a2a2a);
+      border-left: 3px solid transparent;
+      border-radius: 6px;
+      color: var(--text-light, #e2e8f0);
+      font-family: var(--font-mono, monospace);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .profil-sidebar-item:hover {
+      border-left-color: var(--neon-cyan, #06b6d4);
+      color: var(--neon-cyan, #06b6d4);
+      transform: translateX(4px);
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+    }
+    .profil-sidebar-item.active {
+      border-left-color: var(--neon-cyan, #06b6d4);
+      background: rgba(6, 182, 212, 0.12);
+      color: var(--neon-cyan, #06b6d4);
+      font-weight: 700;
+    }
+    .profil-sidebar-item i {
+      font-size: 0.9rem;
+      width: 18px;
+      text-align: center;
+      color: var(--neon-yellow, #facc15);
+    }
+
+    /* ===== KONTEN KANAN ===== */
+    .profil-content {
+      background: var(--dark-card, #121212);
+      border: 1px solid var(--dark-border, #2a2a2a);
+      border-radius: 12px;
+      border-top: 3px solid var(--neon-cyan, #06b6d4);
+      padding: 40px;
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.1);
+      min-height: 500px;
+    }
+
+    .profil-section {
+      display: none;
+      animation: fadeInUp 0.4s ease-out;
+    }
+    .profil-section.active {
+      display: block;
+    }
+
+    .profil-section h2 {
+      font-family: var(--font-display, 'Orbitron', sans-serif);
+      font-size: 1.5rem;
+      color: var(--neon-cyan, #06b6d4);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+      text-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+    }
+
+    .profil-section h3 {
+      font-family: var(--font-display, 'Orbitron', sans-serif);
+      font-size: 1.1rem;
+      color: var(--neon-magenta, #d946ef);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 28px 0 16px;
+      text-shadow: 0 0 10px rgba(217, 70, 239, 0.4);
+    }
+
+    .profil-section p {
+      color: var(--text-light, #e2e8f0);
+      line-height: 1.9;
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+    }
+
+    .profil-section ul,
+    .profil-section ol {
+      color: var(--text-light, #e2e8f0);
+      line-height: 1.9;
+      font-size: 0.95rem;
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+    .profil-section li {
+      margin-bottom: 10px;
+      padding-left: 8px;
+    }
+    .profil-section li::marker {
+      color: var(--neon-cyan, #06b6d4);
+      font-weight: 700;
+    }
+
+    /* Logo di konten */
+    .profil-logo {
+      text-align: center;
+      margin-bottom: 32px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(217, 70, 239, 0.1));
+      border-radius: 12px;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+    .profil-logo img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.6));
+    }
+    .profil-logo h3 {
+      color: var(--neon-cyan, #06b6d4);
+      font-family: var(--font-display, 'Orbitron', sans-serif);
+      font-size: 1.3rem;
+      margin: 0;
+      text-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+    }
+    .profil-logo p {
+      color: var(--text-muted, #94a3b8);
+      font-family: var(--font-mono, monospace);
+      font-size: 0.75rem;
+      margin-top: 6px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Kartu visi */
+    .visi-box {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(217, 70, 239, 0.15));
+      border: 1px solid var(--neon-cyan, #06b6d4);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+    }
+    .visi-box p {
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--text-light, #e2e8f0);
+      text-align: center;
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    /* Kartu misi */
+    .misi-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: misi;
+    }
+    .misi-list li {
+      counter-increment: misi;
+      padding: 16px 20px 16px 60px;
+      background: rgba(6, 182, 212, 0.05);
+      border-left: 3px solid var(--neon-cyan, #06b6d4);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 12px;
+      position: relative;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-light, #e2e8f0);
+      transition: all 0.3s;
+    }
+    .misi-list li::before {
+      content: counter(misi);
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--neon-cyan, #06b6d4), var(--neon-magenta, #d946ef));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display, 'Orbitron', sans-serif);
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
+    }
+    .misi-list li:hover {
+      background: rgba(6, 182, 212, 0.1);
+      transform: translateX(4px);
+    }
+
+    /* Struktur pimpinan */
+    .pimpinan-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .pimpinan-card {
+      background: var(--dark-card-2, #1a1a1a);
+      border: 1px solid var(--dark-border, #2a2a2a);
+      border-left: 4px solid var(--neon-magenta, #d946ef);
+      border-radius: 0 10px 10px 0;
+      padding: 24px;
+      transition: all 0.3s;
+    }
+    .pimpinan-card:hover {
+      border-left-color: var(--neon-cyan, #06b6d4);
+      box-shadow: 0 0 20px rgba(217, 70, 239, 0.3);
+      transform: translateY(-3px);
+    }
+    .pimpinan-card .jabatan {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.72rem;
+      color: var(--neon-yellow, #facc15);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .pimpinan-card .nama {
+      font-family: var(--font-display, 'Orbitron', sans-serif);
+      font-size: 1rem;
+      color: var(--text-light, #e2e8f0);
+      font-weight: 700;
+    }
+
+    /* Program unggulan */
+    .program-box {
+      background: var(--dark-card-2, #1a1a1a);
+      border-left: 4px solid var(--neon-cyan, #06b6d4);
+      border-radius: 0 10px 10px 0;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      transition: all 0.3s;
+    }
+    .program-box:hover {
+      border-left-color: var(--neon-magenta, #d946ef);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+    }
+    .program-box h4 {
+      font-family: var(--font-display, 'Orbitron', sans-serif);
+      font-size: 0.95rem;
+      color: var(--neon-cyan, #06b6d4);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .program-box ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+    .program-box li {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: var(--text-light, #e2e8f0);
+      margin-bottom: 8px;
+    }
+
+    /* Light mode override */
+    body.light-mode .profil-sidebar-item {
+      background: #ffffff;
+      border-color: #e2e8f0;
+      color: #0f172a;
+    }
+    body.light-mode .profil-sidebar-item.active {
+      background: rgba(6, 182, 212, 0.1);
+      color: #0891b2;
+    }
+    body.light-mode .profil-content {
+      background: #ffffff;
+      border-color: #e2e8f0;
+    }
+    body.light-mode .profil-section p,
+    body.light-mode .profil-section ul,
+    body.light-mode .profil-section ol,
+    body.light-mode .profil-section li,
+    body.light-mode .misi-list li,
+    body.light-mode .pimpinan-card .nama,
+    body.light-mode .program-box li {
+      color: #0f172a;
+    }
+    body.light-mode .pimpinan-card,
+    body.light-mode .program-box {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+    body.light-mode .visi-box p { color: #0f172a; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .profil-wrapper {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+      }
+      .profil-sidebar {
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 8px;
+      }
+      .profil-sidebar-item {
+        white-space: nowrap;
+        padding: 10px 16px;
+        font-size: 0.72rem;
+      }
+      .profil-content { padding: 24px 20px; }
+      .profil-section h2 { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loadingPage" class="loading-page">
+    <div class="loading-content">
+      <div class="loading-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h2>Media Center HST</h2>
+      <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Memuat halaman...</p>
+    </div>
+  </div>
+
+  <div id="progressBar" class="progress-bar"></div>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+        <div>
+          <h1>Media Center HST</h1>
+          <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="jamRealtime" class="jam-realtime">Memuat...</div>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="berita.html">Berita</a>
+          <a href="klarifikasi.html">Klarifikasi</a>
+          <a href="statistik.html">Statistik</a>
+          <a href="profil.html" class="active">Profil</a>
+          <button id="toggleDark" class="dark-toggle" title="Ganti Tema">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="profil-wrapper">
+    <!-- SIDEBAR KIRI -->
+    <aside class="profil-sidebar">
+      <a href="#" class="profil-sidebar-item active" data-section="visi-misi">
+        <i class="fas fa-star"></i> Visi & Misi
+      </a>
+      <a href="#" class="profil-sidebar-item" data-section="sejarah">
+        <i class="fas fa-history"></i> Sejarah
+      </a>
+      <a href="#" class="profil-sidebar-item" data-section="struktur">
+        <i class="fas fa-users"></i> Struktur
+      </a>
+      <a href="#" class="profil-sidebar-item" data-section="program">
+        <i class="fas fa-rocket"></i> Program
+      </a>
+      <a href="#" class="profil-sidebar-item" data-section="kontak">
+        <i class="fas fa-envelope"></i> Kontak
+      </a>
+    </aside>
+
+    <!-- KONTEN KANAN -->
+    <div class="profil-content">
+
+      <!-- SECTION: VISI & MISI -->
+      <section class="profil-section active" id="section-visi-misi">
+        <h2>Visi & Misi</h2>
+
+        <div class="profil-logo">
+          <img src="img/logo.png" alt="Logo HST">
+          <h3>Media Center HST</h3>
+          <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+        </div>
+
+        <h3>🎯 Visi</h3>
+        <div class="visi-box">
+          <p>"Menjadi pusat informasi publik yang terpercaya, transparan, dan mudah diakses oleh seluruh masyarakat Kabupaten Hulu Sungai Tengah."</p>
+        </div>
+
+        <h3>⚡ Misi</h3>
+        <ul class="misi-list">
+          <li>Menyajikan informasi yang cepat, akurat, dan berimbang</li>
+          <li>Meningkatkan literasi digital masyarakat</li>
+          <li>Membangun komunikasi publik yang efektif</li>
+          <li>Mendukung keterbukaan informasi pemerintah daerah</li>
+        </ul>
+      </section>
+
+      <!-- SECTION: SEJARAH -->
+      <section class="profil-section" id="section-sejarah">
+        <h2>Sejarah</h2>
+
+        <p>Kabupaten Hulu Sungai Tengah (HST) resmi berdiri sendiri pada tanggal <strong>24 Desember 1959</strong> berdasarkan Undang-Undang Nomor 27 Tahun 1959, dengan ibu kota di Barabai.</p>
+
+        <h3>Pembentukan dan Perjuangan Wilayah</h3>
+        <ul>
+          <li><strong>Pemekaran:</strong> Sebelum berdiri sendiri, wilayah ini merupakan bagian dari Kabupaten Daerah Tingkat II Hulu Sungai yang kemudian dimekarkan.</li>
+          <li><strong>Perjuangan Masyarakat:</strong> Berdirinya kabupaten ini adalah hasil dari usaha panjang para tokoh dan masyarakat Barabai yang ingin memiliki daerah otonom sendiri.</li>
+          <li><strong>Kaitan Historis:</strong> Akar sejarah daerah ini tidak terlepas dari pengaruh masa lalu Kerajaan Banjar serta perjuangan fisik masyarakat lokal di kawasan banua.</li>
+        </ul>
+
+        <h3>Filosofi "Murakata"</h3>
+        <ul>
+          <li><strong>Semboyan Daerah:</strong> HST menggunakan motto <em>Murakata</em> yang merupakan singkatan dari <strong>Mufakat, Rakat, dan Selamat</strong>.</li>
+          <li><strong>Makna Filosofis:</strong> Melambangkan semangat gotong royong, persatuan, dan kerukunan warga untuk mencapai kesejahteraan bersama.</li>
+        </ul>
+      </section>
+
+      <!-- SECTION: STRUKTUR -->
+      <section class="profil-section" id="section-struktur">
+        <h2>Struktur Pimpinan</h2>
+
+        <p>Susunan pimpinan Diskominfo Kabupaten Hulu Sungai Tengah:</p>
+
+        <div class="pimpinan-grid">
+          <div class="pimpinan-card">
+            <div class="jabatan">Kepala Dinas</div>
+            <div class="nama">Darkuni, S.Hut.</div>
+          </div>
+          <div class="pimpinan-card">
+            <div class="jabatan">Sekretaris Dinas</div>
+            <div class="nama">H. Supriyanto, S.AP., M.M.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: PROGRAM -->
+      <section class="profil-section" id="section-program">
+        <h2>Program Unggulan</h2>
+
+        <p>Program unggulan Pemerintah Kabupaten Hulu Sungai Tengah (Pemkab HST) di bawah kepemimpinan Bupati Samsul Rizal berfokus kuat pada peningkatan kesejahteraan masyarakat, kualitas pendidikan, layanan kesehatan, dan pembangunan infrastruktur.</p>
+
+        <div class="program-box">
+          <h4>🏠 Sektor Perumahan & Permukiman</h4>
+          <ul>
+            <li><strong>Program Bedah Rumah (1.000 unit/tahun):</strong> Perbaikan rumah tidak layak huni untuk warga miskin.</li>
+            <li><strong>Program 3 Juta Rumah:</strong> Meraih penghargaan Terbaik III tingkat Kabupaten se-Regional Kalimantan dari Kemendagri.</li>
+          </ul>
+        </div>
+
+        <div class="program-box">
+          <h4>📚 Sektor Pendidikan & SDM Digital</h4>
+          <ul>
+            <li><strong>Akses Layanan & Revitalisasi Sekolah:</strong> Terbaik II Kategori Akses Penduduk ke Layanan Pendidikan.</li>
+            <li><strong>Pelatihan Koding & Kecerdasan Artifisial (K2A):</strong> Melahirkan kontingen Guru Pejuang Digital terbanyak di Kalsel.</li>
+            <li><strong>Sekolah Berbasis Internasional (SBI):</strong> Kerja sama dengan Briton English Education.</li>
+          </ul>
+        </div>
+
+        <div class="program-box">
+          <h4>🏥 Sektor Kesehatan & Kesejahteraan Sosial</h4>
+          <ul>
+            <li><strong>Modernisasi RSUD H. Damanhuri Barabai:</strong> Fasilitas CT Scan, MRI, Mamografi, Cath Lab, hingga Kemoterapi.</li>
+            <li><strong>Intervensi & Penurunan Stunting:</strong> Peringkat terbaik kedua penurunan stunting di Kalimantan Selatan.</li>
+            <li><strong>Pemanfaatan Data Geospasial:</strong> Peta kesehatan digital berbasis spasial.</li>
+          </ul>
+        </div>
+
+        <div class="program-box">
+          <h4>🚀 Sektor Ekonomi & Infrastruktur</h4>
+          <ul>
+            <li><strong>Penguatan Ekonomi & UMKM Desa:</strong> Pasar murah berkala + pemeriksaan kesehatan gratis.</li>
+            <li><strong>Peningkatan Status Jalan & Pengendalian Banjir:</strong> Usulan peningkatan status jalan kabupaten → jalan nasional.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SECTION: KONTAK -->
+      <section class="profil-section" id="section-kontak">
+        <h2>Kontak Kami</h2>
+
+        <p><strong>📍 Alamat:</strong><br>
+        Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>
+        Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+
+        <p><strong>📞 Telepon:</strong> (0517) 3790845</p>
+        <p><strong>✉️ Email:</strong> diskominfo@hstkab.go.id</p>
+        <p><strong>🌐 Website:</strong> mediacenter.hstkab.go.id</p>
+
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps?q=Dinas+Komunikasi+dan+Informatika+Kabupaten+Hulu+Sungai+Tengah&output=embed" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="profil.html">Profil</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2025 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
+    </div>
+  </footer>
+
+  <script src="js/tidb.js"></script>
+  <script>
+    // ============================================
+    // NAVIGASI SECTION PROFIL
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function () {
+      const items = document.querySelectorAll('.profil-sidebar-item');
+      const sections = document.querySelectorAll('.profil-section');
+
+      items.forEach(item => {
+        item.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = this.dataset.section;
+
+          // Update active sidebar
+          items.forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+
+          // Update active section
+          sections.forEach(s => s.classList.remove('active'));
+          const targetSection = document.getElementById('section-' + target);
+          if (targetSection) targetSection.classList.add('active');
+
+          // Scroll ke atas konten
+          const content = document.querySelector('.profil-content');
+          if (content && window.innerWidth < 900) {
+            content.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

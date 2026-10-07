@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Klarifikasi — Media Center HST</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div id="loadingPage" class="loading-page">
+    <div class="loading-content">
+      <div class="loading-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h2>Media Center HST</h2>
+      <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Memuat...</p>
+    </div>
+  </div>
+
+  <div id="progressBar" class="progress-bar"></div>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+        <div>
+          <h1>Media Center HST</h1>
+          <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="jamRealtime" class="jam-realtime">Memuat...</div>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="berita.html">Berita</a>
+          <a href="klarifikasi.html" class="active">Klarifikasi</a>
+          <a href="statistik.html">Statistik</a>
+          <a href="profil.html">Profil</a>
+          <button id="toggleDark" class="dark-toggle" title="Ganti Tema">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <a href="klarifikasi.html" class="btn-kembali">← Kembali ke Klarifikasi</a>
+    <article id="detailKlarifikasi" class="detail-berita">
+      <p style="text-align:center;padding:40px;color:#94a3b8;">⏳ Memuat...</p>
+    </article>
+  </main>
+
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps?q=Dinas+Komunikasi+dan+Informatika+Kabupaten+Hulu+Sungai+Tengah&output=embed" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2025 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
+    </div>
+  </footer>
+
+  <script src="js/tidb.js"></script>
+  <script>
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    async function initDetail() {
+      const container = document.getElementById('detailKlarifikasi');
+      const loadingEl = document.getElementById('loadingPage');
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+
+      if (!id) {
+        container.innerHTML = '<div class="not-found"><h2>Klarifikasi tidak ditemukan</h2><a href="klarifikasi.html" class="btn-kembali">← Kembali</a></div>';
+        if (loadingEl) loadingEl.classList.add('hidden');
+        return;
+      }
+
+      try {
+        const item = await apiCariKlarifikasiById(id);
+
+        if (!item) {
+          container.innerHTML = '<div class="not-found"><h2>Klarifikasi tidak ditemukan</h2><a href="klarifikasi.html" class="btn-kembali">← Kembali</a></div>';
+          return;
+        }
+
+        const foto = item.foto || '';
+        const gambar = window.urlGambar ? window.urlGambar('hoaks', foto) : null;
+        const judul = item.judul || item.title || 'Tanpa Judul';
+        const tanggal = window.formatTanggalJam ? window.formatTanggalJam(item.tanggal) : item.tanggal;
+        const isi = item.isi || '<p><em>(Tidak ada isi)</em></p>';
+
+        const linkSumber = item.link
+          ? `<div style="margin-top:24px;padding:16px;background:rgba(6,182,212,0.08);border-left:3px solid #06b6d4;border-radius:0 8px 8px 0;">
+               <p style="margin:0;font-size:0.85rem;color:#94a3b8;">🔗 <strong>Sumber Referensi:</strong></p>
+               <a href="${escapeHTML(item.link)}" target="_blank" rel="noopener" style="color:#06b6d4;word-break:break-all;font-size:0.88rem;">${escapeHTML(item.link)}</a>
+             </div>`
+          : '';
+
+        container.innerHTML = `
+          <span class="badge" style="background: transparent; color: #ef4444; border-color: #ef4444;">KLARIFIKASI</span>
+          <h1>${escapeHTML(judul)}</h1>
+          <p class="detail-meta">${tanggal}</p>
+          ${gambar ? `<div class="detail-thumb"><img src="${gambar}" alt="${escapeHTML(judul)}"></div>` : ''}
+          <div class="detail-isi">${isi}</div>
+          ${linkSumber}
+          <div class="detail-aksi">
+            <a class="btn-share-wa" href="https://wa.me/?text=${encodeURIComponent(judul + ' — ' + window.location.href)}" target="_blank" rel="noopener">Bagikan via WhatsApp</a>
+          </div>
+        `;
+
+        document.title = judul + ' — Media Center HST';
+      } catch (err) {
+        console.error('❌', err);
+        container.innerHTML = '<div class="not-found"><h2>Gagal memuat</h2><p>' + escapeHTML(err.message) + '</p></div>';
+      } finally {
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+    initDetail();
+  </script>
+</body>
+</html>

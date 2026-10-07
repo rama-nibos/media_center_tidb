@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klarifikasi — Media Center HST</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .load-more-wrapper {
+      display: flex; justify-content: center; align-items: center;
+      flex-direction: column; gap: 12px; margin: 40px 0 60px;
+    }
+    .btn-load-more {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 36px; background: transparent;
+      color: #ef4444;
+      border: 2px solid #ef4444;
+      border-radius: 100px;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+      position: relative; overflow: hidden;
+    }
+    .btn-load-more::before {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(239,68,68,0.3), transparent);
+      transition: left 0.5s;
+    }
+    .btn-load-more:hover::before { left: 100%; }
+    .btn-load-more:hover {
+      background: #ef4444; color: #ffffff;
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); transform: translateY(-2px);
+    }
+    .btn-load-more:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .load-more-info {
+      font-family: var(--font-mono, monospace); font-size: 0.72rem;
+      color: var(--text-muted, #94a3b8); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    body.light-mode .btn-load-more { color: #dc2626; border-color: #dc2626; }
+    body.light-mode .btn-load-more:hover { background: #dc2626; color: #ffffff; }
+  </style>
+</head>
+<body>
+  <div id="loadingPage" class="loading-page">
+    <div class="loading-content">
+      <div class="loading-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h2>Media Center HST</h2>
+      <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Memuat halaman...</p>
+    </div>
+  </div>
+
+  <div id="progressBar" class="progress-bar"></div>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+        <div>
+          <h1>Media Center HST</h1>
+          <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="jamRealtime" class="jam-realtime">Memuat...</div>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="berita.html">Berita</a>
+          <a href="klarifikasi.html" class="active">Klarifikasi</a>
+          <a href="statistik.html">Statistik</a>
+          <a href="profil.html">Profil</a>
+          <button id="toggleDark" class="dark-toggle" title="Ganti Tema">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 style="margin: 32px 0 8px;">🔍 Klarifikasi & Info Hoaks</h2>
+    <p style="color: #64748b; margin-bottom: 24px;">Daftar klarifikasi resmi dari Diskominfo HST terhadap informasi yang beredar di masyarakat.</p>
+
+    <div class="berita-grid" id="klarifikasiList" style="margin-bottom: 24px; min-height: 400px;">
+      <p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">⏳ Memuat data...</p>
+    </div>
+
+    <div class="load-more-wrapper" id="loadMoreWrapper" style="display:none;">
+      <button class="btn-load-more" id="btnLoadMore">
+        <i class="fas fa-arrow-down"></i>
+        <span>Muat Lebih Banyak</span>
+      </button>
+      <p class="load-more-info" id="loadMoreInfo">Menampilkan 0 klarifikasi</p>
+    </div>
+  </main>
+
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps?q=Dinas+Komunikasi+dan+Informatika+Kabupaten+Hulu+Sungai+Tengah&output=embed" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2025 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
+    </div>
+  </footer>
+
+  <script src="js/tidb.js"></script>
+  <script>
+    // ============================================
+    // KONFIGURASI
+    // ============================================
+    const ITEMS_PER_PAGE_AWAL = 12;
+    const ITEMS_PER_LOAD = 12;
+
+    let dataKlarifikasi = [];
+    let jumlahDitampilkan = 0;
+
+    // ============================================
+    // HELPER
+    // ============================================
+    function stripHTML(html) {
+      if (!html) return '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function getGambarKlarifikasi(b) {
+      // Hoax pakai folder foto_kotaku
+      const url = window.urlGambar ? window.urlGambar('hoaks', b.foto) : null;
+      return url || "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23ef4444' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-family='sans-serif' font-size='20' text-anchor='middle' dy='.35em'%3EKlarifikasi%3C/text%3E%3C/svg%3E";
+    }
+
+    // ============================================
+    // RENDER KARTU
+    // ============================================
+    function kartuKlarifikasi(b) {
+      const gambar = getGambarKlarifikasi(b);
+      const isi = stripHTML(b.isi).slice(0, 160);
+      const judul = b.title || 'Tanpa Judul';
+      const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
+
+      // Link ke halaman detail HST asli (buka tab baru)
+      const id = b.id || b.id_hoaks;
+      const linkDetail = `klarifikasi-detail.html?id=${id}`;
+
+      return `
+        <article class="berita-card">
+          <div class="berita-thumb">
+            <img src="${gambar}" alt="${escapeHTML(judul)}" loading="lazy">
+          </div>
+          <div class="berita-body">
+            <span class="badge" style="background: transparent; color: #ef4444; border-color: #ef4444;">KLARIFIKASI</span>
+            <h3>${escapeHTML(judul)}</h3>
+            <p class="tanggal">${tanggal}</p>
+            <p class="ringkasan">${isi}${stripHTML(b.isi).length > 160 ? '...' : ''}</p>
+            <a href="${linkDetail}" class="btn-baca">Baca Selengkapnya</a>
+          </div>
+        </article>
+      `;
+    }
+
+    // ============================================
+    // MUAT LEBIH BANYAK
+    // ============================================
+    function muatLebihBanyak(jumlah) {
+      const container = document.getElementById('klarifikasiList');
+      const start = jumlahDitampilkan;
+      const end = Math.min(start + jumlah, dataKlarifikasi.length);
+      const slice = dataKlarifikasi.slice(start, end);
+
+      container.insertAdjacentHTML('beforeend', slice.map(kartuKlarifikasi).join(''));
+      jumlahDitampilkan = end;
+
+      const wrapper = document.getElementById('loadMoreWrapper');
+      const btn = document.getElementById('btnLoadMore');
+      const info = document.getElementById('loadMoreInfo');
+
+      wrapper.style.display = 'flex';
+      info.textContent = `Menampilkan ${jumlahDitampilkan} dari ${dataKlarifikasi.length} klarifikasi`;
+
+      if (jumlahDitampilkan >= dataKlarifikasi.length) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-check"></i><span>Semua Klarifikasi Telah Dimuat</span>';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-arrow-down"></i><span>Muat Lebih Banyak (+' + ITEMS_PER_LOAD + ')</span>';
+      }
+    }
+
+    // ============================================
+    // LOAD KLARIFIKASI
+    // ============================================
+    async function loadKlarifikasi() {
+      const container = document.getElementById('klarifikasiList');
+      const loadingEl = document.getElementById('loadingPage');
+
+      try {
+        container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">⏳ Memuat data...</p>';
+
+        const list = await apiGetKlarifikasiPaged({ page: 1, per_page: 1000 });
+        console.log('✅ Loaded', list.length, 'klarifikasi dari HST');
+
+        if (!list || list.length === 0) {
+          container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">Belum ada klarifikasi.</p>';
+          if (loadingEl) loadingEl.classList.add('hidden');
+          return;
+        }
+
+        // Sortir terbaru
+        dataKlarifikasi = [...list].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+        jumlahDitampilkan = 0;
+        container.innerHTML = '';
+
+        // Render awal 6
+        muatLebihBanyak(ITEMS_PER_PAGE_AWAL);
+
+      } catch (err) {
+        console.error('❌ Error:', err);
+        container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Gagal memuat data. Cek server.</p>';
+        document.getElementById('loadMoreWrapper').style.display = 'none';
+      } finally {
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+
+    // ============================================
+    // EVENT LISTENER
+    // ============================================
+    document.getElementById('btnLoadMore').addEventListener('click', function () {
+      muatLebihBanyak(ITEMS_PER_LOAD);
+    });
+
+    // ============================================
+    // JALANKAN
+    // ============================================
+    loadKlarifikasi();
+    // Jam, progress bar, dark mode di-handle oleh js/tidb.js
+  </script>
+</body>
+</html>

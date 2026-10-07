@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Berita — Media Center HST</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .load-more-wrapper {
+      display: flex; justify-content: center; align-items: center;
+      flex-direction: column; gap: 12px; margin: 40px 0 60px;
+    }
+    .btn-load-more {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 36px; background: transparent;
+      color: var(--neon-cyan, #06b6d4);
+      border: 2px solid var(--neon-cyan, #06b6d4);
+      border-radius: 100px;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+      position: relative; overflow: hidden;
+    }
+    .btn-load-more::before {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(6,182,212,0.3), transparent);
+      transition: left 0.5s;
+    }
+    .btn-load-more:hover::before { left: 100%; }
+    .btn-load-more:hover {
+      background: var(--neon-cyan, #06b6d4); color: #0a0a0a;
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.8); transform: translateY(-2px);
+    }
+    .btn-load-more:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-load-more i { font-size: 0.9rem; }
+    .load-more-info {
+      font-family: var(--font-mono, monospace); font-size: 0.72rem;
+      color: var(--text-muted, #94a3b8); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    body.light-mode .btn-load-more { color: #0891b2; border-color: #0891b2; box-shadow: 0 0 15px rgba(8, 145, 178, 0.2); }
+    body.light-mode .btn-load-more:hover { background: #0891b2; color: #ffffff; }
+    body.light-mode .load-more-info { color: #64748b; }
+  </style>
+</head>
+<body>
+  <div id="loadingPage" class="loading-page">
+    <div class="loading-content">
+      <div class="loading-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h2>Media Center HST</h2>
+      <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Memuat halaman...</p>
+    </div>
+  </div>
+
+  <div id="progressBar" class="progress-bar"></div>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+        <div>
+          <h1>Media Center HST</h1>
+          <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="jamRealtime" class="jam-realtime">Memuat...</div>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="berita.html" class="active">Berita</a>
+          <a href="klarifikasi.html">Klarifikasi</a>
+          <a href="statistik.html">Statistik</a>
+          <a href="profil.html">Profil</a>
+          <button id="toggleDark" class="dark-toggle" title="Ganti Tema">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 style="margin: 32px 0 16px;">📰 Semua Berita</h2>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="🔍 Cari berita..." autocomplete="off">
+    </div>
+
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-kategori="Semua">Semua</button>
+    </div>
+
+    <div class="berita-grid" id="beritaList" style="margin-bottom: 24px; min-height: 400px;">
+      <p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">⏳ Memuat berita...</p>
+    </div>
+
+    <div class="load-more-wrapper" id="loadMoreWrapper" style="display:none;">
+      <button class="btn-load-more" id="btnLoadMore">
+        <i class="fas fa-arrow-down"></i>
+        <span>Muat Lebih Banyak</span>
+      </button>
+      <p class="load-more-info" id="loadMoreInfo">Menampilkan 0 berita</p>
+    </div>
+  </main>
+
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps?q=Dinas+Komunikasi+dan+Informatika+Kabupaten+Hulu+Sungai+Tengah&output=embed" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2025 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
+    </div>
+  </footer>
+
+  <script src="js/tidb.js"></script>
+  <script>
+    // ============================================
+    // KONFIGURASI PAGINATION
+    // ============================================
+    const PER_PAGE = 12;
+
+    // ============================================
+    // STATE
+    // ============================================
+    let pageSekarang = 1;
+    let kategoriAktif = '';
+    let queryCari = '';
+    let semuaBerita = [];
+    let totalBerita = 0;
+
+    // ============================================
+    // HELPER
+    // ============================================
+    function getGambarBerita(b) {
+      const foto = b.foto || b.gambar || '';
+      const url = window.urlGambar ? window.urlGambar('berita', foto) : null;
+      return url || "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%2306b6d4' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-family='sans-serif' font-size='20' text-anchor='middle' dy='.35em'%3EMedia Center HST%3C/text%3E%3C/svg%3E";
+    }
+
+    function stripHTML(html) {
+      if (!html) return '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+    }
+
+    function kartuBerita(b) {
+      const isi = stripHTML(b.isi);
+      const judul = b.title || b.judul || 'Tanpa Judul';
+      const kategori = b.kategori_id || b.kategori || 'Umum';
+      const id = b.id_berita || b.id;
+      const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
+
+      return `
+        <article class="berita-card">
+          <div class="berita-thumb">
+            <img src="${getGambarBerita(b)}" alt="${judul}" loading="lazy">
+          </div>
+          <div class="berita-body">
+            <span class="badge">${kategori}</span>
+            <h3>${judul}</h3>
+            <p class="tanggal">${tanggal}</p>
+            <p class="ringkasan">${isi.slice(0, 160)}${isi.length > 160 ? '...' : ''}</p>
+            <a href="berita-detail.html?id=${id}" class="btn-baca" style="margin-top:12px;">Baca Selengkapnya</a>
+          </div>
+        </article>
+      `;
+    }
+
+    // ============================================
+    // LOAD BERITA (pagination server-side)
+    // ============================================
+    async function loadBerita(reset = false) {
+      const container = document.getElementById('beritaList');
+      const wrapper = document.getElementById('loadMoreWrapper');
+      const btn = document.getElementById('btnLoadMore');
+      const info = document.getElementById('loadMoreInfo');
+
+      if (reset) {
+        pageSekarang = 1;
+        semuaBerita = [];
+        container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">⏳ Memuat berita...</p>';
+        wrapper.style.display = 'none';
+      }
+
+      try {
+        const items = await apiGetBeritaPaged({
+          page: pageSekarang,
+          per_page: PER_PAGE,
+          kategori: kategoriAktif,
+          q: queryCari,
+        });
+
+        if (reset) container.innerHTML = '';
+
+        if (items.length === 0 && pageSekarang === 1) {
+          container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">😕 Tidak ada berita yang cocok.</p>';
+          wrapper.style.display = 'none';
+          return;
+        }
+
+        container.insertAdjacentHTML('beforeend', items.map(kartuBerita).join(''));
+        semuaBerita = semuaBerita.concat(items);
+
+        wrapper.style.display = 'flex';
+        info.textContent = `Menampilkan ${semuaBerita.length} berita`;
+
+        if (items.length < PER_PAGE) {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fas fa-check"></i><span>Semua Berita Telah Dimuat</span>';
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-arrow-down"></i><span>Muat Lebih Banyak (+' + PER_PAGE + ')</span>';
+        }
+
+        const loadingEl = document.getElementById('loadingPage');
+        if (loadingEl) loadingEl.classList.add('hidden');
+
+      } catch (err) {
+        console.error('❌ Error:', err);
+        if (reset) {
+          container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Gagal memuat berita. Cek server.</p>';
+        }
+        const loadingEl = document.getElementById('loadingPage');
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+
+    // ============================================
+    // FILTER KATEGORI (dari TiDB)
+    // ============================================
+    async function initFilterKategori() {
+      try {
+        const res = await fetch('/api/kategori');
+        const json = await res.json();
+        const kategoriList = json.rows || [];
+
+        const filterBar = document.getElementById('filterBar');
+        filterBar.innerHTML = '<button class="filter-btn active" data-kategori="Semua">Semua</button>' +
+          kategoriList.map(k => `<button class="filter-btn" data-kategori="${k.nama}">${k.nama}</button>`).join('');
+
+        filterBar.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.addEventListener('click', function () {
+            filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            kategoriAktif = this.dataset.kategori === 'Semua' ? '' : this.dataset.kategori;
+            loadBerita(true);
+          });
+        });
+      } catch (err) {
+        console.error('Filter error:', err);
+      }
+    }
+
+    // ============================================
+    // EVENT LISTENER
+    // ============================================
+    document.getElementById('btnLoadMore').addEventListener('click', function () {
+      pageSekarang++;
+      loadBerita(false);
+    });
+
+    // Search — debounce 400ms
+    let searchTimer = null;
+    document.getElementById('searchInput').addEventListener('input', function () {
+      clearTimeout(searchTimer);
+      const val = this.value;
+      searchTimer = setTimeout(() => {
+        queryCari = val;
+        loadBerita(true);
+      }, 400);
+    });
+
+    // ============================================
+    // INIT
+    // ============================================
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initFilterKategori();
+      await loadBerita(true);
+    });
+  </script>
+</body>
+</html>

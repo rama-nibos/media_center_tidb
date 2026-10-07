@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin — Media Center HST</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-body">
+
+  <div id="loadingPage" class="loading-page hidden">
+    <div class="loading-content">
+      <div class="loading-logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <h2>Media Center HST</h2>
+      <p>Diskominfo Kabupaten Hulu Sungai Tengah</p>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Memuat halaman...</p>
+    </div>
+  </div>
+
+  <header class="admin-header">
+    <div class="logo-area">
+      <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+      <div>
+        <h1>Dashboard Admin</h1>
+        <p>Media Center HST</p>
+      </div>
+    </div>
+    <div class="admin-user">
+      <span>👤 <strong id="userName">admin</strong></span>
+      <button id="toggleDark" class="dark-toggle admin-dark-toggle" title="Ganti Tema">🌙</button>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="admin-wrapper">
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">
+        <div class="logo"><img src="img/logo.png" alt="Logo HST"></div>
+        <div>
+          <h3>Media Center</h3>
+          <p>HST Admin Panel</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="sidebar-label">MENU UTAMA</p>
+        <a href="#" class="sidebar-item active" onclick="showSection('dashboard', this); return false;">
+          <span class="sidebar-icon">📊</span> Dashboard
+        </a>
+        <a href="#" class="sidebar-item" onclick="showSection('berita', this); return false;">
+          <span class="sidebar-icon">📰</span> Kelola Berita
+        </a>
+        <a href="#" class="sidebar-item" onclick="showSection('klarifikasi', this); return false;">
+          <span class="sidebar-icon">🔍</span> Klarifikasi
+        </a>
+        <a href="#" class="sidebar-item" onclick="showSection('kategori', this); return false;">
+          <span class="sidebar-icon">🏷️</span> Kategori
+        </a>
+        <a href="#" class="sidebar-item" onclick="showSection('statistik', this); return false;">
+          <span class="sidebar-icon">📈</span> Statistik
+        </a>
+
+        <p class="sidebar-label">LAINNYA</p>
+        <a href="index.html" class="sidebar-item" target="_blank">
+          <span class="sidebar-icon">🌐</span> Lihat Website
+        </a>
+        <a href="#" class="sidebar-item" onclick="showSection('pengaturan', this); return false;">
+          <span class="sidebar-icon">⚙️</span> Pengaturan
+        </a>
+        <a href="#" class="sidebar-item" onclick="logout(); return false;" style="color:#ef4444;">
+          <span class="sidebar-icon">🚪</span> Logout
+        </a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <!-- DASHBOARD -->
+      <section class="admin-section" id="section-dashboard">
+        <div class="section-title">
+          <h2>📊 Dashboard</h2>
+          <p>Ringkasan aktivitas Media Center HST</p>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-icon">📰</div>
+            <div>
+              <h3 id="statTotalBerita">0</h3>
+              <p>Total Berita</p>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🔍</div>
+            <div>
+              <h3 id="statTotalKlarifikasi">0</h3>
+              <p>Klarifikasi</p>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🏷️</div>
+            <div>
+              <h3 id="statTotalKategori">0</h3>
+              <p>Kategori</p>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">👁️</div>
+            <div>
+              <h3 id="statTotalViews">0</h3>
+              <p>Total Views</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h3>📋 5 Berita Terbaru</h3>
+          <table class="mini-table">
+            <thead><tr><th>Judul</th><th>Kategori</th><th>Tanggal</th></tr></thead>
+            <tbody id="dashBeritaTerbaru">
+              <tr><td colspan="3" style="text-align:center;color:#94a3b8;">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BERITA -->
+      <section class="admin-section" id="section-berita" style="display:none;">
+        <div class="section-title">
+          <h2>📰 Kelola Berita</h2>
+          <p>Kelola semua berita di Media Center HST</p>
+          <button class="btn-tambah" onclick="openForm()">+ Tambah Berita</button>
+        </div>
+        <div class="admin-card" style="max-height: 600px; overflow-y: auto;">
+          <table class="mini-table">
+            <thead>
+              <tr><th>No</th><th>Judul</th><th>Kategori</th><th>Tanggal</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="adminTbody">
+              <tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:30px;">⏳ Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- KLARIFIKASI -->
+      <section class="admin-section" id="section-klarifikasi" style="display:none;">
+        <div class="section-title">
+          <h2>🔍 Klarifikasi</h2>
+          <p>Kelola klarifikasi / info hoaks</p>
+          <button class="btn-tambah" onclick="openFormKlarifikasi()">+ Tambah Klarifikasi</button>
+        </div>
+        <div class="admin-card" style="max-height: 600px; overflow-y: auto;">
+          <table class="mini-table">
+            <thead>
+              <tr><th>No</th><th>Judul</th><th>Tanggal</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="klarifikasiTbody">
+              <tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:30px;">⏳ Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- KATEGORI -->
+      <section class="admin-section" id="section-kategori" style="display:none;">
+        <div class="section-title">
+          <h2>🏷️ Kategori</h2>
+          <p>Daftar kategori berita</p>
+          <button class="btn-tambah" onclick="openFormKategori()">+ Tambah Kategori</button>
+        </div>
+        <div class="admin-card">
+          <table class="mini-table">
+            <thead>
+              <tr><th>No</th><th>Warna</th><th>Nama Kategori</th><th>Jumlah Berita</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="kategoriTbody">
+              <tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:20px;">⏳ Memuat kategori...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- STATISTIK -->
+      <section class="admin-section" id="section-statistik" style="display:none;">
+        <div class="section-title">
+          <h2>📈 Statistik</h2>
+          <p>Statistik berita Media Center HST</p>
+        </div>
+        <div class="admin-card">
+          <h3>Grafik Jumlah Berita per Kategori</h3>
+          <canvas id="chartAdmin" style="max-height:300px; min-height:260px;"></canvas>
+        </div>
+      </section>
+
+      <!-- PENGATURAN -->
+      <section class="admin-section" id="section-pengaturan" style="display:none;">
+        <div class="section-title">
+          <h2>⚙️ Pengaturan</h2>
+          <p>Pengaturan akun dan aplikasi</p>
+        </div>
+        <div class="admin-card">
+          <p><strong>Username:</strong> <span id="settingUser">admin</span></p>
+          <p><strong>Password:</strong> <em style="color:#94a3b8;">Ubah di file login.html</em></p>
+          <p><strong>Database:</strong> TiDB Cloud (MySQL)</p>
+          <p><strong>Total Berita:</strong> <span id="settingTotalBerita">0</span></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL BERITA -->
+  <div class="modal-overlay" id="modalForm">
+    <div class="modal-box">
+      <h3 id="modalTitle">Tambah Berita</h3>
+      <form id="formBerita">
+        <input type="hidden" id="editId">
+        <label>Judul Berita</label>
+        <input type="text" id="fJudul" required>
+        <label>Kategori</label>
+        <select id="fKategori" required>
+          <option value="">-- Pilih Kategori --</option>
+        </select>
+        <label>Tanggal</label>
+        <input type="date" id="fTanggal" required>
+        <label>Ringkasan</label>
+        <textarea id="fRingkasan" required></textarea>
+        <label>Tag (pisahkan dengan koma)</label>
+        <input type="text" id="fTag" placeholder="contoh: hst, bupati, kegiatan">
+        <label>Gambar Berita</label>
+        <input type="file" id="fGambar" accept="image/*"
+               style="padding: 10px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e2e8f0; width: 100%;">
+        <div id="previewGambar" style="margin-top: 10px; display: none;">
+          <img id="previewImg" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid #2a2a2a;">
+          <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 6px;">Preview — akan disimpan saat klik Simpan</p>
+        </div>
+        <input type="hidden" id="fGambarUrl">
+        <label>Isi Lengkap</label>
+        <textarea id="fIsi" required></textarea>
+        <div class="modal-actions">
+          <button type="submit" class="btn-simpan" id="btnSimpan">💾 Simpan</button>
+          <button type="button" class="btn-batal" onclick="closeForm()">Batal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL KLARIFIKASI -->
+  <div class="modal-overlay" id="modalKlarifikasi">
+    <div class="modal-box">
+      <h3 id="modalKlarifikasiTitle">Tambah Klarifikasi</h3>
+      <form id="formKlarifikasi">
+        <input type="hidden" id="editKlarifikasiId">
+        <label>Judul</label>
+        <input type="text" id="fkJudul" required>
+        <label>Tanggal</label>
+        <input type="date" id="fkTanggal" required>
+        <label>Ringkasan</label>
+        <textarea id="fkRingkasan" required></textarea>
+        <label>Gambar</label>
+        <input type="file" id="fkGambar" accept="image/*"
+               style="padding: 10px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; color: #e2e8f0; width: 100%;">
+        <div id="fkPreviewGambar" style="margin-top: 10px; display: none;">
+          <img id="fkPreviewImg" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid #2a2a2a;">
+        </div>
+        <input type="hidden" id="fkGambarUrl">
+        <label>Link Sumber (opsional)</label>
+        <input type="url" id="fkLink" placeholder="https://...">
+        <label>Isi Lengkap</label>
+        <textarea id="fkIsi" required></textarea>
+        <div class="modal-actions">
+          <button type="submit" class="btn-simpan" id="btnSimpanKlarifikasi">💾 Simpan</button>
+          <button type="button" class="btn-batal" onclick="closeFormKlarifikasi()">Batal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL KATEGORI -->
+  <div class="modal-overlay" id="modalKategori">
+    <div class="modal-box">
+      <h3 id="modalKategoriTitle">Tambah Kategori</h3>
+      <form id="formKategori">
+        <input type="hidden" id="editKategoriId">
+        <label>Nama Kategori</label>
+        <input type="text" id="fkNama" required placeholder="contoh: Pemerintahan">
+        <label>Warna</label>
+        <input type="color" id="fkWarna" value="#06b6d4" required style="height: 50px; cursor: pointer;">
+        <div class="modal-actions">
+          <button type="submit" class="btn-simpan" id="btnSimpanKategori">💾 Simpan</button>
+          <button type="button" class="btn-batal" onclick="closeFormKategori()">Batal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/tidb.js"></script>
+  <script>
+    // ============================================
+    // CEK LOGIN
+    // ============================================
+    if (localStorage.getItem('isLogin') !== 'true') {
+      window.location.href = 'login.html';
+    }
+    const userName = localStorage.getItem('userLogin') || 'admin';
+    document.getElementById('userName').textContent = userName;
+    document.getElementById('settingUser').textContent = userName;
+
+    // ============================================
+    // STATE
+    // ============================================
+    let beritaList = [];
+    let kategoriList = [];
+    let klarifikasiList = [];
+    let adminChart = null;
+
+    // ============================================
+    // NORMALIZER
+    // ============================================
+    function normalisasiBerita(b) {
+      let tanggalStr = '';
+      if (b.tanggal) {
+        if (typeof b.tanggal === 'string') tanggalStr = b.tanggal;
+        else if (b.tanggal instanceof Date) {
+          const d = b.tanggal;
+          const pad = n => String(n).padStart(2, '0');
+          tanggalStr = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        } else tanggalStr = String(b.tanggal);
+      }
+
+      return {
+        id:        b.id || b.id_berita,
+        judul:     b.judul || b.title || 'Tanpa Judul',
+        kategori:  b.kategori || b.kategori_id || 'Umum',
+        ringkasan: b.ringkasan || '',
+        isi:       b.isi || '',
+        gambar:    b.gambar || b.foto || '',
+        tanggal:   tanggalStr,
+        tag:       b.tag || [],
+        views:     b.views || 0,
+      };
+    }
+
+    function parseTags(tagData) {
+      if (Array.isArray(tagData)) return tagData;
+      if (typeof tagData === 'string') {
+        try {
+          const parsed = JSON.parse(tagData);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return tagData.split(',').map(t => t.trim()).filter(Boolean);
+        }
+      }
+      return [];
+    }
+
+    // ============================================
+    // NAVIGASI
+    // ============================================
+    window.showSection = function (sectionName, el) {
+      document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+      const target = document.getElementById('section-' + sectionName);
+      if (target) target.style.display = 'block';
+      document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+      if (el) el.classList.add('active');
+    };
+
+    // ============================================
+    // LOAD BERITA
+    // ============================================
+    async function loadData() {
+      const tbody = document.getElementById('adminTbody');
+      try {
+        const raw = await apiGetBeritaDB();
+        beritaList = raw.map(normalisasiBerita);
+        beritaList.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+        renderAdmin();
+        updateDashboardStats();
+        console.log('✅ Loaded', beritaList.length, 'berita dari TiDB');
+      } catch (err) {
+        console.error('❌ Error:', err);
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:30px;">Gagal memuat data. Cek server.</td></tr>';
+      }
+    }
+
+    // ============================================
+    // LOAD KATEGORI
+    // ============================================
+    async function loadKategori() {
+      try {
+        const res = await fetch('/api/kategori');
+        const json = await res.json();
+        kategoriList = json.rows || [];
+        renderKategori();
+        populateKategoriDropdown();
+        console.log('✅ Loaded', kategoriList.length, 'kategori');
+      } catch (err) {
+        console.error('❌ Error:', err);
+      }
+    }
+
+    // ============================================
+    // LOAD KLARIFIKASI
+    // ============================================
+    async function loadKlarifikasiAdmin() {
+      const tbody = document.getElementById('klarifikasiTbody');
+      try {
+        const res = await fetch('/api/klarifikasi?per_page=1000');
+        klarifikasiList = await res.json();
+        renderKlarifikasiAdmin();
+        console.log('✅ Loaded', klarifikasiList.length, 'klarifikasi');
+      } catch (err) {
+        console.error('❌ Klarifikasi:', err);
+        if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#ef4444;padding:30px;">Gagal memuat.</td></tr>';
+      }
+    }
+
+    function renderKlarifikasiAdmin() {
+      const tbody = document.getElementById('klarifikasiTbody');
+      if (!tbody) return;
+      if (klarifikasiList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:30px;">Belum ada klarifikasi.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = klarifikasiList.map((b, i) => {
+        const judul = b.judul || b.title || '';
+        const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
+        return `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${judul}</td>
+            <td>${tanggal}</td>
+            <td>
+              <button class="btn-edit" onclick="editKlarifikasi(${b.id})">Edit</button>
+              <button class="btn-hapus" onclick="hapusKlarifikasi(${b.id})">Hapus</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ============================================
+    // DASHBOARD STATS
+    // ============================================
+    function updateDashboardStats() {
+      const totalBerita = beritaList.length;
+      const totalKlarifikasi = klarifikasiList.length || 121;
+      const totalKategori = [...new Set(beritaList.map(b => b.kategori))].length;
+      const totalViews = beritaList.reduce((sum, b) => sum + (b.views || 0), 0);
+
+      document.getElementById('statTotalBerita').textContent = totalBerita.toLocaleString('id-ID');
+      document.getElementById('statTotalKlarifikasi').textContent = totalKlarifikasi;
+      document.getElementById('statTotalKategori').textContent = totalKategori;
+      document.getElementById('statTotalViews').textContent = totalViews.toLocaleString('id-ID');
+      document.getElementById('settingTotalBerita').textContent = totalBerita;
+
+      const dashTbody = document.getElementById('dashBeritaTerbaru');
+      if (dashTbody) {
+        const terbaru = beritaList.slice(0, 5);
+        if (terbaru.length === 0) {
+          dashTbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#94a3b8;padding:20px;">Belum ada berita.</td></tr>';
+        } else {
+          dashTbody.innerHTML = terbaru.map(b => `
+            <tr>
+              <td>${b.judul}</td>
+              <td><span class="badge">${b.kategori}</span></td>
+              <td>${window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal}</td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      const canvas = document.getElementById('chartAdmin');
+      if (canvas && typeof Chart !== 'undefined') {
+        const dataPerKategori = {};
+        beritaList.forEach(b => {
+          dataPerKategori[b.kategori] = (dataPerKategori[b.kategori] || 0) + 1;
+        });
+
+        if (adminChart) adminChart.destroy();
+
+        adminChart = new Chart(canvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: Object.keys(dataPerKategori),
+            datasets: [{
+              label: 'Jumlah Berita',
+              data: Object.values(dataPerKategori),
+              backgroundColor: ['#06b6d4', '#d946ef', '#facc15', '#ec4899', '#a855f7', '#10b981', '#f59e0b', '#ef4444'],
+              borderRadius: 8,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+          }
+        });
+      }
+    }
+
+    // ============================================
+    // RENDER TABEL BERITA
+    // ============================================
+    function renderAdmin() {
+      const tbody = document.getElementById('adminTbody');
+      if (!tbody) return;
+      if (beritaList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:30px;">Belum ada berita.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = beritaList.map((b, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${b.judul}</td>
+          <td><span class="badge">${b.kategori}</span></td>
+          <td>${window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal}</td>
+          <td>
+            <button class="btn-edit" onclick="editBerita(${b.id})">Edit</button>
+            <button class="btn-hapus" onclick="hapusBerita(${b.id})">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ============================================
+    // RENDER TABEL KATEGORI
+    // ============================================
+    function renderKategori() {
+      const tbody = document.getElementById('kategoriTbody');
+      if (!tbody) return;
+      if (kategoriList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:20px;">Belum ada kategori.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = kategoriList.map((k, i) => {
+        const jumlahBerita = beritaList.filter(b => b.kategori === k.nama).length;
+        return `
+          <tr>
+            <td>${i + 1}</td>
+            <td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${k.warna || '#06b6d4'};"></span></td>
+            <td><strong>${k.nama}</strong></td>
+            <td>${jumlahBerita} berita</td>
+            <td>
+              <button class="btn-edit" onclick="editKategori(${k.id})">Edit</button>
+              <button class="btn-hapus" onclick="hapusKategori(${k.id}, '${k.nama}')">Hapus</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function populateKategoriDropdown() {
+      const select = document.getElementById('fKategori');
+      if (!select) return;
+      const currentValue = select.value;
+      select.innerHTML = '<option value="">-- Pilih Kategori --</option>' +
+        kategoriList.map(k => `<option value="${k.nama}">${k.nama}</option>`).join('');
+      if (currentValue) select.value = currentValue;
+    }
+
+    // ============================================
+    // UPLOAD GAMBAR (Berita)
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function () {
+      const fGambar = document.getElementById('fGambar');
+      const preview = document.getElementById('previewGambar');
+      const previewImg = document.getElementById('previewImg');
+      const fGambarUrl = document.getElementById('fGambarUrl');
+      if (!fGambar) return;
+
+      fGambar.addEventListener('change', async function (e) {
+        const file = e.target.files[0];
+        if (!file) { preview.style.display = 'none'; fGambarUrl.value = ''; return; }
+
+        const reader = new FileReader();
+        reader.onload = (ev) => { previewImg.src = ev.target.result; preview.style.display = 'block'; };
+        reader.readAsDataURL(file);
+
+        const fd = new FormData();
+        fd.append('gambar', file);
+        try {
+          const res = await fetch('/api/upload', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Upload gagal');
+          fGambarUrl.value = data.url;
+          alert('✅ Gambar ter-upload!');
+        } catch (err) {
+          alert('❌ Gagal upload: ' + err.message);
+          preview.style.display = 'none';
+          fGambarUrl.value = '';
+        }
+      });
+    });
+
+    // ============================================
+    // FORM BERITA
+    // ============================================
+    window.openForm = function (id = null) {
+      const modal = document.getElementById('modalForm');
+      const title = document.getElementById('modalTitle');
+      const form = document.getElementById('formBerita');
+
+      if (id) {
+        const b = beritaList.find(x => x.id === id);
+        if (!b) return;
+        title.textContent = 'Edit Berita';
+        document.getElementById('editId').value = b.id;
+        document.getElementById('fJudul').value = b.judul;
+        document.getElementById('fKategori').value = b.kategori;
+        document.getElementById('fTanggal').value = (b.tanggal || '').split(' ')[0] || '';
+        document.getElementById('fRingkasan').value = b.ringkasan;
+        document.getElementById('fTag').value = parseTags(b.tag).join(', ');
+        document.getElementById('fIsi').value = b.isi;
+
+        document.getElementById('fGambar').value = '';
+        document.getElementById('fGambarUrl').value = b.gambar || '';
+        const preview = document.getElementById('previewGambar');
+        const previewImg = document.getElementById('previewImg');
+        if (b.gambar) {
+          const gambarUrl = b.gambar.startsWith('http') || b.gambar.startsWith('/')
+            ? b.gambar
+            : `https://data-mediacenter.hstkab.go.id/assets/foto_brt/${b.gambar}`;
+          previewImg.src = gambarUrl;
+          preview.style.display = 'block';
+        } else {
+          preview.style.display = 'none';
+        }
+      } else {
+        title.textContent = 'Tambah Berita';
+        form.reset();
+        document.getElementById('editId').value = '';
+        document.getElementById('fGambar').value = '';
+        document.getElementById('fGambarUrl').value = '';
+        document.getElementById('previewGambar').style.display = 'none';
+      }
+      modal.classList.add('show');
+    };
+
+    window.closeForm = function () {
+      document.getElementById('modalForm').classList.remove('show');
+      document.getElementById('formBerita').reset();
+      document.getElementById('editId').value = '';
+      document.getElementById('fGambarUrl').value = '';
+      document.getElementById('previewGambar').style.display = 'none';
+    };
+
+    document.getElementById('formBerita').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btnSimpan = document.getElementById('btnSimpan');
+      btnSimpan.disabled = true;
+      btnSimpan.textContent = '⏳ Menyimpan...';
+
+      const id = document.getElementById('editId').value;
+      const tagInput = document.getElementById('fTag').value.trim();
+
+      const data = {
+        judul: document.getElementById('fJudul').value.trim(),
+        kategori: document.getElementById('fKategori').value,
+        tanggal: document.getElementById('fTanggal').value,
+        ringkasan: document.getElementById('fRingkasan').value.trim(),
+        isi: document.getElementById('fIsi').value.trim(),
+        tag: tagInput ? tagInput.split(',').map(t => t.trim()).filter(t => t) : [],
+        gambar: document.getElementById('fGambarUrl').value || '',
+      };
+
+      try {
+        if (id) {
+          await apiUpdateBerita(id, data);
+          alert('✅ Berita berhasil diupdate!');
+        } else {
+          await apiTambahBerita(data);
+          alert('✅ Berita berhasil ditambahkan!');
+        }
+        closeForm();
+        await loadData();
+        renderKategori();
+      } catch (err) {
+        console.error('❌ Error:', err);
+        alert('❌ Gagal menyimpan: ' + err.message);
+      } finally {
+        btnSimpan.disabled = false;
+        btnSimpan.textContent = '💾 Simpan';
+      }
+    });
+
+    window.editBerita = function (id) { openForm(id); };
+
+    window.hapusBerita = async function (id) {
+      if (!confirm('Yakin mau hapus berita ini?')) return;
+      try {
+        await apiHapusBerita(id);
+        alert('✅ Berita berhasil dihapus!');
+        await loadData();
+        renderKategori();
+      } catch (err) {
+        alert('❌ Gagal menghapus: ' + err.message);
+      }
+    };
+
+    // ============================================
+    // FORM KLARIFIKASI
+    // ============================================
+    window.openFormKlarifikasi = function (id = null) {
+      const modal = document.getElementById('modalKlarifikasi');
+      const title = document.getElementById('modalKlarifikasiTitle');
+      const form = document.getElementById('formKlarifikasi');
+
+      if (id) {
+        const b = klarifikasiList.find(x => x.id === id);
+        if (!b) return;
+        title.textContent = 'Edit Klarifikasi';
+        document.getElementById('editKlarifikasiId').value = b.id;
+        document.getElementById('fkJudul').value = b.judul || b.title || '';
+        document.getElementById('fkTanggal').value = (b.tanggal || '').split(' ')[0] || (b.tanggal || '').split('T')[0] || '';
+        document.getElementById('fkRingkasan').value = b.ringkasan || '';
+        document.getElementById('fkIsi').value = b.isi || '';
+        document.getElementById('fkLink').value = b.link || '';
+        document.getElementById('fkGambar').value = '';
+        document.getElementById('fkGambarUrl').value = b.foto || '';
+        const preview = document.getElementById('fkPreviewGambar');
+        const previewImg = document.getElementById('fkPreviewImg');
+        if (b.foto) {
+          const url = window.urlGambar ? window.urlGambar('hoaks', b.foto) : '';
+          if (url) { previewImg.src = url; preview.style.display = 'block'; }
+        } else {
+          preview.style.display = 'none';
+        }
+      } else {
+        title.textContent = 'Tambah Klarifikasi';
+        form.reset();
+        document.getElementById('editKlarifikasiId').value = '';
+        document.getElementById('fkGambarUrl').value = '';
+        document.getElementById('fkPreviewGambar').style.display = 'none';
+      }
+      modal.classList.add('show');
+    };
+
+    window.closeFormKlarifikasi = function () {
+      document.getElementById('modalKlarifikasi').classList.remove('show');
+      document.getElementById('formKlarifikasi').reset();
+      document.getElementById('editKlarifikasiId').value = '';
+      document.getElementById('fkGambarUrl').value = '';
+      document.getElementById('fkPreviewGambar').style.display = 'none';
+    };
+
+    // Upload gambar klarifikasi
+    document.addEventListener('DOMContentLoaded', function () {
+      const fkGambar = document.getElementById('fkGambar');
+      if (!fkGambar) return;
+
+      fkGambar.addEventListener('change', async function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          document.getElementById('fkPreviewImg').src = ev.target.result;
+          document.getElementById('fkPreviewGambar').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+
+        const fd = new FormData();
+        fd.append('gambar', file);
+        try {
+          const res = await fetch('/api/upload', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error);
+          document.getElementById('fkGambarUrl').value = data.url;
+          alert('✅ Gambar ter-upload!');
+        } catch (err) {
+          alert('❌ Gagal upload: ' + err.message);
+        }
+      });
+    });
+
+    document.getElementById('formKlarifikasi').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSimpanKlarifikasi');
+      btn.disabled = true;
+      btn.textContent = '⏳ Menyimpan...';
+
+      const id = document.getElementById('editKlarifikasiId').value;
+      const data = {
+        judul: document.getElementById('fkJudul').value.trim(),
+        tanggal: document.getElementById('fkTanggal').value,
+        ringkasan: document.getElementById('fkRingkasan').value.trim(),
+        isi: document.getElementById('fkIsi').value.trim(),
+        foto: document.getElementById('fkGambarUrl').value || '',
+        link: document.getElementById('fkLink').value.trim(),
+      };
+
+      try {
+        const url = id ? `/api/klarifikasi/${id}` : '/api/klarifikasi';
+        const method = id ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error('Gagal simpan');
+        alert(id ? '✅ Klarifikasi diupdate!' : '✅ Klarifikasi ditambahkan!');
+        closeFormKlarifikasi();
+        await loadKlarifikasiAdmin();
+      } catch (err) {
+        alert('❌ ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Simpan';
+      }
+    });
+
+    window.editKlarifikasi = function (id) { openFormKlarifikasi(id); };
+
+    window.hapusKlarifikasi = async function (id) {
+      if (!confirm('Yakin mau hapus klarifikasi ini?')) return;
+      try {
+        const res = await fetch(`/api/klarifikasi/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Gagal hapus');
+        alert('✅ Klarifikasi dihapus!');
+        await loadKlarifikasiAdmin();
+      } catch (err) {
+        alert('❌ ' + err.message);
+      }
+    };
+
+    // ============================================
+    // FORM KATEGORI
+    // ============================================
+    window.openFormKategori = function (id = null) {
+      const modal = document.getElementById('modalKategori');
+      const title = document.getElementById('modalKategoriTitle');
+      const form = document.getElementById('formKategori');
+
+      if (id) {
+        const k = kategoriList.find(x => x.id === id);
+        if (!k) return;
+        title.textContent = 'Edit Kategori';
+        document.getElementById('editKategoriId').value = k.id;
+        document.getElementById('fkNama').value = k.nama;
+        document.getElementById('fkWarna').value = k.warna || '#06b6d4';
+      } else {
+        title.textContent = 'Tambah Kategori';
+        form.reset();
+        document.getElementById('editKategoriId').value = '';
+        document.getElementById('fkWarna').value = '#06b6d4';
+      }
+      modal.classList.add('show');
+    };
+
+    window.closeFormKategori = function () {
+      document.getElementById('modalKategori').classList.remove('show');
+      document.getElementById('formKategori').reset();
+      document.getElementById('editKategoriId').value = '';
+    };
+
+    document.getElementById('formKategori').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btnSimpan = document.getElementById('btnSimpanKategori');
+      btnSimpan.disabled = true;
+      btnSimpan.textContent = '⏳ Menyimpan...';
+
+      const id = document.getElementById('editKategoriId').value;
+      const data = {
+        nama: document.getElementById('fkNama').value.trim(),
+        warna: document.getElementById('fkWarna').value,
+      };
+
+      try {
+        if (id) {
+          await fetch(`/api/kategori/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+          alert('✅ Kategori berhasil diupdate!');
+        } else {
+          await fetch('/api/kategori', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+          alert('✅ Kategori berhasil ditambahkan!');
+        }
+        closeFormKategori();
+        await loadKategori();
+      } catch (err) {
+        alert('❌ Gagal menyimpan kategori: ' + err.message);
+      } finally {
+        btnSimpan.disabled = false;
+        btnSimpan.textContent = '💾 Simpan';
+      }
+    });
+
+    window.editKategori = function (id) { openFormKategori(id); };
+
+    window.hapusKategori = async function (id, nama) {
+      const jumlahBerita = beritaList.filter(b => b.kategori === nama).length;
+      let pesan = `Yakin mau hapus kategori "${nama}"?`;
+      if (jumlahBerita > 0) pesan += `\n\n⚠️ Ada ${jumlahBerita} berita yang pakai kategori ini.`;
+      if (!confirm(pesan)) return;
+      try {
+        await fetch(`/api/kategori/${id}`, { method: 'DELETE' });
+        alert('✅ Kategori berhasil dihapus!');
+        await loadKategori();
+      } catch (err) {
+        alert('❌ Gagal menghapus: ' + err.message);
+      }
+    };
+
+    // ============================================
+    // LOGOUT
+    // ============================================
+    window.logout = function () {
+      if (!confirm('Yakin mau logout?')) return;
+      localStorage.removeItem('isLogin');
+      localStorage.removeItem('userLogin');
+      window.location.href = 'login.html';
+    };
+
+    // ============================================
+    // INIT
+    // ============================================
+    async function initApp() {
+      const loadingEl = document.getElementById('loadingPage');
+      try {
+        await loadData();
+        await loadKategori();
+        await loadKlarifikasiAdmin();
+      } catch (err) {
+        console.error('❌ Error:', err);
+      } finally {
+        if (loadingEl) loadingEl.classList.add('hidden');
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
