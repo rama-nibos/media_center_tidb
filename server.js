@@ -15,12 +15,15 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
-// ============================================
-// FOLDER UPLOAD + STATIC
-// ============================================
+
+// Folder uploads — hanya di lokal. Vercel read-only, upload pakai Vercel Blob
 const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
-app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
+// Skip bikin folder kalau di Vercel (production)
+if (process.env.NODE_ENV !== 'production') {
+  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+  app.use('/uploads', express.static(uploadDir));
+}
 
 // Vercel Blob: pakai memoryStorage (bukan disk)
 const upload = multer({
