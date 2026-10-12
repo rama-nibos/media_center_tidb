@@ -292,6 +292,23 @@ app.post('/api/berita/:id/view', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Endpoint total stats (dari DB)
+app.get('/api/stats', async (req, res) => {
+  try {
+    const [[{ total_berita }]] = await pool.execute('SELECT COUNT(*) AS total_berita FROM berita');
+    const [[{ total_klarifikasi }]] = await pool.execute('SELECT COUNT(*) AS total_klarifikasi FROM klarifikasi');
+    const [[{ total_kategori }]] = await pool.execute('SELECT COUNT(*) AS total_kategori FROM kategori');
+
+    res.json({
+      total_berita: Number(total_berita),
+      total_klarifikasi: Number(total_klarifikasi),
+      total_kategori: Number(total_kategori),
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ============================================
 // API: KATEGORI
 // ============================================

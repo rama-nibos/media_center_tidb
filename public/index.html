@@ -180,18 +180,30 @@
           }).join('');
         }
 
-        // 3. Statistik
-        const totalBerita = document.getElementById('totalBerita');
-        if (totalBerita) totalBerita.textContent = '1.356';
+        // Statistik — ambil live dari DATABASE
+try {
+  const res = await fetch('/api/stats');
+  const stat = await res.json();
 
-        const totalKlarifikasi = document.getElementById('totalKlarifikasi');
-        if (totalKlarifikasi) totalKlarifikasi.textContent = '121';
+  const totalBerita = document.getElementById('totalBerita');
+  if (totalBerita) totalBerita.textContent = stat.total_berita.toLocaleString('id-ID');
 
-        try {
-          const stat = await apiGetStatistik();
-          const totalPengunjung = document.getElementById('totalPengunjung');
-          if (totalPengunjung) totalPengunjung.textContent = (stat.total || 0).toLocaleString('id-ID');
-        } catch (e) { /* diamkan */ }
+  const totalKlarifikasi = document.getElementById('totalKlarifikasi');
+  if (totalKlarifikasi) totalKlarifikasi.textContent = stat.total_klarifikasi.toLocaleString('id-ID');
+} catch (e) {
+  const totalBerita = document.getElementById('totalBerita');
+  if (totalBerita) totalBerita.textContent = '—';
+  const totalKlarifikasi = document.getElementById('totalKlarifikasi');
+  if (totalKlarifikasi) totalKlarifikasi.textContent = '—';
+}
+
+// Pengunjung — dari API pengunjung
+try {
+  const res = await fetch('/api/pengunjung');
+  const json = await res.json();
+  const totalPengunjung = document.getElementById('totalPengunjung');
+  if (totalPengunjung) totalPengunjung.textContent = (json.jumlah || 0).toLocaleString('id-ID');
+} catch (e) { /* diamkan */ }
 
         // 4. Berita Populer — dari /api/berita-populer (by views)
         const populerList = document.getElementById('beritaPopuler');
