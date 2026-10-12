@@ -172,11 +172,22 @@
         const list100 = await apiGetBeritaPaged({ per_page: 100 });
         console.log('✅ Loaded', list100.length, 'berita');
 
-        // Statistik total
-        const totalBerita = document.getElementById('statTotalBerita');
-        if (totalBerita) totalBerita.textContent = '1.356';
-        const totalKlarifikasi = document.getElementById('statTotalKlarifikasi');
-        if (totalKlarifikasi) totalKlarifikasi.textContent = '121';
+// Ambil dari DB
+try {
+  const res = await fetch('/api/stats');
+  const stat = await res.json();
+
+  const totalBerita = document.getElementById('statTotalBerita');
+  if (totalBerita) totalBerita.textContent = stat.total_berita.toLocaleString('id-ID');
+
+  const totalKlarifikasi = document.getElementById('statTotalKlarifikasi');
+  if (totalKlarifikasi) totalKlarifikasi.textContent = stat.total_klarifikasi.toLocaleString('id-ID');
+
+  const totalKategori = document.getElementById('statTotalKategori');
+  if (totalKategori) totalKategori.textContent = stat.total_kategori.toLocaleString('id-ID');
+} catch (e) {
+  console.error('Stats error:', e);
+}
 
         // Hitung per kategori dari 100 terbaru
         const dataPerKategori = {};
