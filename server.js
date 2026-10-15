@@ -459,6 +459,102 @@ app.delete('/api/klarifikasi/:id', async (req, res) => {
 });
 
 // ============================================
+// API: CRON SYNC — Sinkronisasi Berita dari HST
+// Dipanggil otomatis oleh Vercel Cron
+// ============================================
+app.get('/api/cron/sync-berita', async (req, res) => {
+  // ============ KEAMANAN ============
+  const authHeader = req.headers.authorization;
+  const secret = process.env.CRON_SECRET;
+
+  // Kalau CRON_SECRET di-set, wajib verifikasi
+  if (secret && authHeader !== `Bearer ${secret}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    console.log('🔄 Cron sync dimulai...');
+
+    // ============ 1. AMBIL DATA DARI HST ============
+    const response = await fetch('https://mediacenter.hstkab.go.id/api/berita');
+    if (!response.ok) throw new Error(`HST API error: ${response.status}`);
+
+    const semuaBeritaHST = await response.json();
+    console.log(`📥 Dapat ${semuaBeritaHST.length} berita dari HST`);
+
+    // ============ 2. AMBIL JUDUL + TANGGAL YANG SUDAH ADA ============
+    const [existing] = await pool.execute(
+      'SELECT judul, DATE(tanggal) AS tgl FROM berita'
+    );
+
+    const setExisting = new Set();
+    existing.forEach(r => {
+      const judul = String(r.judul || '').toLowerCase().trim().replace(/\s+/g, ' ');
+      const tgl = r.tgl instanceof Date
+        ? r.tgl.toISOString().split('T')[0]
+        : String(r.tgl).split(' ')[0].split('T')[0];
+      setExisting.add(`${judul}|${tgl}`);
+    });
+    console.log(`🔍 ${existing.length} berita sudah ada di DB`);
+
+    // ============ 3. INSERT YANG BARU SAJA ============
+    let beritaBaru = 0;
+    let skip = 0;
+    let gagal = 0;
+
+    for (const b of semuaBeritaHST) {
+      const judul = String(b.title || '').toLowerCase().trim().replace(/\s+/g, ' ');
+      const tgl = String(b.tanggal || '').split(' ')[0].split('T')[0];
+      const kunci = `${judul}|${tgl}`;
+
+      if (setExisting.has(kunci)) {
+        skip++;
+        continue;
+      }
+
+      try {
+        const ringkasan = (b.isi || '').replace(/<[^>]*>/g, '').slice(0, 300);
+        await pool.execute(
+          `INSERT INTO berita 
+            (judul, kategori, tanggal, ringkasan, isi, gambar, tag, views)
+           VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
+          [
+            (b.title || 'Tanpa Judul').slice(0, 490),
+            (b.kategori_id || 'Umum').slice(0, 100),
+            b.tanggal,
+            ringkasan,
+            b.isi || '',
+            (b.foto || '').slice(0, 490),
+            JSON.stringify([]),
+          ]
+        );
+        beritaBaru++;
+        setExisting.add(kunci); // hindari dobel kalau HST punya duplikat
+        console.log(`   ✅ Baru: ${b.title?.slice(0, 60)}...`);
+      } catch (err) {
+        gagal++;
+        console.error(`   ❌ Gagal: ${err.message}`);
+      }
+    }
+
+    console.log(`📊 Berita baru: ${beritaBaru}, skip: ${skip}, gagal: ${gagal}`);
+
+    res.json({
+      success: true,
+      beritaBaru,
+      skip,
+      gagal,
+      totalHST: semuaBeritaHST.length,
+      totalDB: existing.length + beritaBaru,
+    });
+
+  } catch (err) {
+    console.error('❌ Cron sync gagal:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ============================================
 // API: PENGUNJUNG
 // ============================================
 app.post('/api/pengunjung', async (req, res) => {
