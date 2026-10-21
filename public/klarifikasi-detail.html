@@ -44,7 +44,7 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main-content">
     <a href="klarifikasi.html" class="btn-kembali">← Kembali ke Klarifikasi</a>
     <article id="detailKlarifikasi" class="detail-berita">
       <p style="text-align:center;padding:40px;color:#94a3b8;">⏳ Memuat...</p>
@@ -52,51 +52,38 @@
   </main>
 
   <footer class="footer-main">
-  <div class="footer-container">
-    <div class="footer-col">
-      <h3>MAPS</h3>
-      <div class="footer-map">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid"
-          width="100%" 
-          height="220" 
-          style="border:0;border-radius:4px;" 
-          allowfullscreen 
-          loading="lazy" 
-          referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="profil.html">Profil Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
       </div>
     </div>
-
-    <div class="footer-col">
-      <h3>LINK TERKAIT</h3>
-      <ul class="footer-links">
-        <li><a href="profil.html">Profil Kami</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
-        <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
     </div>
-
-    <div class="footer-col">
-      <h3>KONTAK KAMI</h3>
-      <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
-      <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
-  </div>
-</footer>
+  </footer>
 
   <script src="js/tidb.js"></script>
   <script>
     function escapeHTML(str) {
       if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     async function initDetail() {
@@ -113,7 +100,6 @@
 
       try {
         const item = await apiCariKlarifikasiById(id);
-
         if (!item) {
           container.innerHTML = '<div class="not-found"><h2>Klarifikasi tidak ditemukan</h2><a href="klarifikasi.html" class="btn-kembali">← Kembali</a></div>';
           return;
@@ -143,7 +129,6 @@
             <a class="btn-share-wa" href="https://wa.me/?text=${encodeURIComponent(judul + ' — ' + window.location.href)}" target="_blank" rel="noopener">Bagikan via WhatsApp</a>
           </div>
         `;
-
         document.title = judul + ' — Media Center HST';
       } catch (err) {
         console.error('❌', err);
@@ -153,6 +138,62 @@
       }
     }
     initDetail();
+  </script>
+
+  <!-- AKSESIBILITAS -->
+  <button id="a11yToggle" class="a11y-btn" aria-label="Buka menu aksesibilitas">♿</button>
+    <div id="a11yPanel" class="a11y-panel" style="display:none;">
+    <div class="a11y-header">Aksesibilitas</div>
+    <button onclick="ubahFontSize(1)" aria-label="Perbesar teks">🔍 Perbesar teks</button>
+    <button onclick="ubahFontSize(-1)" aria-label="Perkecil teks">🔎 Perkecil teks</button>
+    <button onclick="toggleKontras()" aria-label="Mode kontras tinggi">🌓 Kontras Tinggi</button>
+    <button onclick="bacakanHalaman()" aria-label="Bacakan halaman dengan suara">🔊 Baca Halaman</button>
+    <button onclick="resetA11y()" aria-label="Reset pengaturan">🔄 Reset</button>
+  </div>
+  <script>
+    (function() {
+      const btn = document.getElementById('a11yToggle');
+      const panel = document.getElementById('a11yPanel');
+      if (btn && panel) btn.addEventListener('click', () => { panel.style.display = panel.style.display === 'none' ? 'flex' : 'none'; });
+      const savedSize = localStorage.getItem('a11yFontSize');
+      if (savedSize) document.documentElement.style.fontSize = savedSize + '%';
+      if (localStorage.getItem('a11yContrast') === 'true') document.body.classList.add('high-contrast');
+    })();
+    let currentSize = parseInt(localStorage.getItem('a11yFontSize')) || 100;
+    function ubahFontSize(delta) { currentSize = Math.max(80, Math.min(150, currentSize + (delta * 10))); document.documentElement.style.fontSize = currentSize + '%'; localStorage.setItem('a11yFontSize', currentSize); }
+    function toggleKontras() { document.body.classList.toggle('high-contrast'); localStorage.setItem('a11yContrast', document.body.classList.contains('high-contrast')); }
+    function resetA11y() { currentSize = 100; document.documentElement.style.fontSize = '100%'; document.body.classList.remove('high-contrast'); localStorage.removeItem('a11yFontSize'); localStorage.removeItem('a11yContrast'); }
+        // ============================================
+    // MODE SUARA (Text-to-Speech)
+    // ============================================
+    function bacakanHalaman() {
+      // 1. Cek dukungan browser
+      if (!('speechSynthesis' in window)) {
+        alert('Maaf, browser Anda tidak mendukung fitur baca suara.');
+        return;
+      }
+
+      // 2. Kalau sedang membaca, hentikan (biar bisa toggle)
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        return;
+      }
+
+      // 3. Ambil teks dari halaman (fokus ke tag <main>)
+      const mainContent = document.querySelector('main') || document.body;
+      const teks = mainContent.innerText || mainContent.textContent;
+
+      // 4. Buat objek suara
+      const suara = new SpeechSynthesisUtterance(teks);
+      
+      // 5. Atur bahasa ke Indonesia
+      suara.lang = 'id-ID';
+      suara.rate = 1; // Kecepatan normal
+      suara.pitch = 1; // Nada normal
+
+      // 6. Mulai bacakan
+      window.speechSynthesis.speak(suara);
+    }
   </script>
 </body>
 </html>

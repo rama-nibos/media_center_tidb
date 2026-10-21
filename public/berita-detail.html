@@ -44,7 +44,7 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main-content">
     <a href="berita.html" class="btn-kembali" id="btnKembali">← Kembali</a>
     <article id="detailBerita" class="detail-berita">
       <p style="text-align:center;padding:40px;color:#94a3b8;">⏳ Memuat...</p>
@@ -71,49 +71,35 @@
   </main>
 
   <footer class="footer-main">
-  <div class="footer-container">
-    <div class="footer-col">
-      <h3>MAPS</h3>
-      <div class="footer-map">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid"
-          width="100%" 
-          height="220" 
-          style="border:0;border-radius:4px;" 
-          allowfullscreen 
-          loading="lazy" 
-          referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="profil.html">Profil Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
       </div>
     </div>
-
-    <div class="footer-col">
-      <h3>LINK TERKAIT</h3>
-      <ul class="footer-links">
-        <li><a href="profil.html">Profil Kami</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
-        <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
     </div>
-
-    <div class="footer-col">
-      <h3>KONTAK KAMI</h3>
-      <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
-      <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
-  </div>
-</footer>
+  </footer>
 
   <script src="js/tidb.js"></script>
   <script>
-    // ============================================
-    // HELPER
-    // ============================================
     function stripHTML(html) {
       if (!html) return '';
       const tmp = document.createElement('div');
@@ -123,92 +109,54 @@
 
     function escapeHTML(str) {
       if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
-    // ============================================
-// RATING — pakai API + TiDB
-// ============================================
-async function tampilkanRating(id) {
-  const section = document.getElementById('ratingSection');
-  const stars = document.querySelectorAll('#ratingStars span');
-  const info = document.getElementById('ratingInfo');
-  if (!section) return;
-
-  section.style.display = 'block';
-
-  try {
-    const res = await fetch(`/api/rating/${id}`);
-    const data = await res.json();
-    const rata = data.rata || 0;
-
-    if (data.jumlah === 0) {
-      info.innerHTML = 'Belum ada rating. Jadi yang pertama!';
-    } else {
-      info.innerHTML = `⭐ Rata-rata: <strong>${rata}</strong> / 5 dari ${data.jumlah} penilaian`;
-    }
-  } catch (err) {
-    info.textContent = 'Gagal memuat rating.';
-  }
-}
-
-function pasangRating(id) {
-  const stars = document.querySelectorAll('#ratingStars span');
-  const info = document.getElementById('ratingInfo');
-
-  stars.forEach(star => {
-    star.addEventListener('mouseenter', () => {
-      const val = Number(star.dataset.value);
-      stars.forEach(s => {
-        s.style.color = Number(s.dataset.value) <= val ? 'var(--neon-yellow, #facc15)' : '';
-      });
-    });
-
-    star.addEventListener('click', async () => {
-      const nilai = Number(star.dataset.value);
+    async function tampilkanRating(id) {
+      const section = document.getElementById('ratingSection');
+      const stars = document.querySelectorAll('#ratingStars span');
+      const info = document.getElementById('ratingInfo');
+      if (!section) return;
+      section.style.display = 'block';
 
       try {
-        const res = await fetch('/api/rating', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id_berita: id, nilai }),
-        });
+        const res = await fetch(`/api/rating/${id}`);
         const data = await res.json();
+        const rata = data.rata || 0;
+        if (data.jumlah === 0) info.innerHTML = 'Belum ada rating. Jadi yang pertama!';
+        else info.innerHTML = `⭐ Rata-rata: <strong>${rata}</strong> / 5 dari ${data.jumlah} penilaian`;
+      } catch (err) { info.textContent = 'Gagal memuat rating.'; }
+    }
 
-        info.innerHTML = `⭐ Rata-rata: <strong>${data.rata}</strong> / 5 dari ${data.jumlah} penilaian ✅ Terima kasih!`;
-        stars.forEach(s => {
-          s.classList.toggle('active', Number(s.dataset.value) <= nilai);
+    function pasangRating(id) {
+      const stars = document.querySelectorAll('#ratingStars span');
+      const info = document.getElementById('ratingInfo');
+      stars.forEach(star => {
+        star.addEventListener('mouseenter', () => {
+          const val = Number(star.dataset.value);
+          stars.forEach(s => s.style.color = Number(s.dataset.value) <= val ? 'var(--neon-yellow, #facc15)' : '');
         });
-      } catch (err) {
-        alert('Gagal kirim rating: ' + err.message);
-      }
-    });
-  });
+        star.addEventListener('click', async () => {
+          const nilai = Number(star.dataset.value);
+          try {
+            const res = await fetch('/api/rating', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_berita: id, nilai }) });
+            const data = await res.json();
+            info.innerHTML = `⭐ Rata-rata: <strong>${data.rata}</strong> / 5 dari ${data.jumlah} penilaian ✅ Terima kasih!`;
+            stars.forEach(s => s.classList.toggle('active', Number(s.dataset.value) <= nilai));
+          } catch (err) { alert('Gagal kirim rating: ' + err.message); }
+        });
+      });
+      document.getElementById('ratingStars').addEventListener('mouseleave', () => stars.forEach(s => s.style.color = ''));
+    }
 
-  document.getElementById('ratingStars').addEventListener('mouseleave', () => {
-    stars.forEach(s => s.style.color = '');
-  });
-}
-
-    // ============================================
-    // RENDER DETAIL
-    // ============================================
     function renderDetail(item) {
       const container = document.getElementById('detailBerita');
       if (!container) return;
-
       const foto = item.foto || item.gambar || '';
       const gambar = window.urlGambar ? window.urlGambar('berita', foto) : null;
       const judul = item.title || item.judul || 'Tanpa Judul';
       const kategori = item.kategori_id || item.kategori || 'Umum';
-      const tanggal = window.formatTanggalJam
-        ? window.formatTanggalJam(item.tanggal)
-        : item.tanggal;
+      const tanggal = window.formatTanggalJam ? window.formatTanggalJam(item.tanggal) : item.tanggal;
 
       container.innerHTML = `
         <span class="badge">${escapeHTML(kategori)}</span>
@@ -217,46 +165,25 @@ function pasangRating(id) {
         ${gambar ? `<div class="detail-thumb"><img src="${gambar}" alt="${escapeHTML(judul)}"></div>` : ''}
         <div class="detail-isi">${item.isi || '<p><em>(Tidak ada isi)</em></p>'}</div>
         <div class="detail-aksi">
-          <a class="btn-share-wa"
-             href="https://wa.me/?text=${encodeURIComponent(judul + ' — ' + window.location.href)}"
-             target="_blank" rel="noopener">
-            Bagikan via WhatsApp
-          </a>
+          <a class="btn-share-wa" href="https://wa.me/?text=${encodeURIComponent(judul + ' — ' + window.location.href)}" target="_blank" rel="noopener">Bagikan via WhatsApp</a>
         </div>
       `;
-
       document.title = judul + ' — Media Center HST';
     }
 
-    // ============================================
-    // RENDER BERITA TERKAIT
-    // ============================================
     async function renderTerkait(item) {
       const container = document.getElementById('beritaTerkait');
       if (!container) return;
-
       try {
         const kategori = item.kategori_id || item.kategori || '';
         let terkait = await apiGetBeritaPaged({ per_page: 4, kategori });
-
-        // Buang yang sama dengan yang sekarang
         terkait = terkait.filter(b => String(b.id) !== String(item.id)).slice(0, 3);
-
-        // Kalau kurang dari 3, ambil yang terbaru
         if (terkait.length < 3) {
           const tambahan = await apiGetBeritaPaged({ per_page: 6 });
-          const tambah = tambahan
-            .filter(b => String(b.id) !== String(item.id))
-            .filter(b => !terkait.find(t => t.id === b.id))
-            .slice(0, 3 - terkait.length);
+          const tambah = tambahan.filter(b => String(b.id) !== String(item.id)).filter(b => !terkait.find(t => t.id === b.id)).slice(0, 3 - terkait.length);
           terkait = terkait.concat(tambah);
         }
-
-        if (terkait.length === 0) {
-          container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:20px;">Belum ada berita terkait.</p>';
-          return;
-        }
-
+        if (terkait.length === 0) { container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:20px;">Belum ada berita terkait.</p>'; return; }
         container.innerHTML = terkait.map(b => {
           const foto = b.foto || b.gambar || '';
           const gambar = window.urlGambar ? window.urlGambar('berita', foto) : '';
@@ -264,7 +191,6 @@ function pasangRating(id) {
           const kategori = b.kategori_id || b.kategori || 'Umum';
           const id = b.id_berita || b.id;
           const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
-
           return `
             <article class="berita-card">
               <div class="berita-thumb"><img src="${gambar}" alt="${escapeHTML(judul)}" loading="lazy"></div>
@@ -277,78 +203,103 @@ function pasangRating(id) {
             </article>
           `;
         }).join('');
-      } catch (err) {
-        console.error('Terkait error:', err);
-        container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:20px;">Gagal memuat berita terkait.</p>';
-      }
+      } catch (err) { container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:20px;">Gagal memuat berita terkait.</p>'; }
     }
 
-    // ============================================
-    // INIT DETAIL
-    // ============================================
     async function initDetail() {
       const container = document.getElementById('detailBerita');
       const loadingEl = document.getElementById('loadingPage');
-
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
 
       if (!id) {
-        container.innerHTML = `
-          <div class="not-found">
-            <h2>Berita tidak ditemukan</h2>
-            <p>Parameter <code>?id=</code> tidak ada di URL.</p>
-            <a href="berita.html" class="btn-kembali">← Kembali ke Berita</a>
-          </div>`;
+        container.innerHTML = `<div class="not-found"><h2>Berita tidak ditemukan</h2><p>Parameter <code>?id=</code> tidak ada di URL.</p><a href="berita.html" class="btn-kembali">← Kembali ke Berita</a></div>`;
         if (loadingEl) loadingEl.classList.add('hidden');
         return;
       }
 
       try {
-        // Ambil berita dari TiDB by ID (cepat, cuma 1 query)
         const item = await apiCariBeritaById(id);
-
         if (!item) {
-          container.innerHTML = `
-            <div class="not-found">
-              <h2>Berita tidak ditemukan</h2>
-              <p>Berita dengan ID <strong>${escapeHTML(id)}</strong> tidak ada di arsip.</p>
-              <a href="berita.html" class="btn-kembali">← Kembali ke Berita</a>
-            </div>`;
+          container.innerHTML = `<div class="not-found"><h2>Berita tidak ditemukan</h2><p>Berita dengan ID <strong>${escapeHTML(id)}</strong> tidak ada di arsip.</p><a href="berita.html" class="btn-kembali">← Kembali ke Berita</a></div>`;
           if (loadingEl) loadingEl.classList.add('hidden');
           return;
         }
-
         renderDetail(item);
         renderTerkait(item);
         tampilkanRating(id);
         pasangRating(id);
-
-        // Increment views (sekali per sesi browser)
         const keyView = `view_${id}`;
         if (!sessionStorage.getItem(keyView)) {
-        fetch(`/api/berita/${id}/view`, { method: 'POST' })
-        .then(() => sessionStorage.setItem(keyView, 'true'))
-        .catch(err => console.warn('View increment gagal:', err.message));
-}
-
+          fetch(`/api/berita/${id}/view`, { method: 'POST' })
+          .then(() => sessionStorage.setItem(keyView, 'true'))
+          .catch(err => console.warn('View increment gagal:', err.message));
+        }
       } catch (err) {
         console.error('❌ Error:', err);
-        if (container) {
-          container.innerHTML = `
-            <div class="not-found">
-              <h2>Gagal memuat berita</h2>
-              <p>${escapeHTML(err.message)}</p>
-              <a href="berita.html" class="btn-kembali">← Kembali</a>
-            </div>`;
-        }
+        if (container) container.innerHTML = `<div class="not-found"><h2>Gagal memuat berita</h2><p>${escapeHTML(err.message)}</p><a href="berita.html" class="btn-kembali">← Kembali</a></div>`;
       } finally {
         if (loadingEl) loadingEl.classList.add('hidden');
       }
     }
 
     initDetail();
-    // Jam, progress bar, dark mode di-handle oleh js/tidb.js
+  </script>
+
+  <!-- AKSESIBILITAS -->
+  <button id="a11yToggle" class="a11y-btn" aria-label="Buka menu aksesibilitas">♿</button>
+    <div id="a11yPanel" class="a11y-panel" style="display:none;">
+    <div class="a11y-header">Aksesibilitas</div>
+    <button onclick="ubahFontSize(1)" aria-label="Perbesar teks">🔍 Perbesar teks</button>
+    <button onclick="ubahFontSize(-1)" aria-label="Perkecil teks">🔎 Perkecil teks</button>
+    <button onclick="toggleKontras()" aria-label="Mode kontras tinggi">🌓 Kontras Tinggi</button>
+    <button onclick="bacakanHalaman()" aria-label="Bacakan halaman dengan suara">🔊 Baca Halaman</button>
+    <button onclick="resetA11y()" aria-label="Reset pengaturan">🔄 Reset</button>
+  </div>
+  <script>
+    (function() {
+      const btn = document.getElementById('a11yToggle');
+      const panel = document.getElementById('a11yPanel');
+      if (btn && panel) btn.addEventListener('click', () => { panel.style.display = panel.style.display === 'none' ? 'flex' : 'none'; });
+      const savedSize = localStorage.getItem('a11yFontSize');
+      if (savedSize) document.documentElement.style.fontSize = savedSize + '%';
+      if (localStorage.getItem('a11yContrast') === 'true') document.body.classList.add('high-contrast');
+    })();
+    let currentSize = parseInt(localStorage.getItem('a11yFontSize')) || 100;
+    function ubahFontSize(delta) { currentSize = Math.max(80, Math.min(150, currentSize + (delta * 10))); document.documentElement.style.fontSize = currentSize + '%'; localStorage.setItem('a11yFontSize', currentSize); }
+    function toggleKontras() { document.body.classList.toggle('high-contrast'); localStorage.setItem('a11yContrast', document.body.classList.contains('high-contrast')); }
+    function resetA11y() { currentSize = 100; document.documentElement.style.fontSize = '100%'; document.body.classList.remove('high-contrast'); localStorage.removeItem('a11yFontSize'); localStorage.removeItem('a11yContrast'); }
+        // ============================================
+    // MODE SUARA (Text-to-Speech)
+    // ============================================
+    function bacakanHalaman() {
+      // 1. Cek dukungan browser
+      if (!('speechSynthesis' in window)) {
+        alert('Maaf, browser Anda tidak mendukung fitur baca suara.');
+        return;
+      }
+
+      // 2. Kalau sedang membaca, hentikan (biar bisa toggle)
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        return;
+      }
+
+      // 3. Ambil teks dari halaman (fokus ke tag <main>)
+      const mainContent = document.querySelector('main') || document.body;
+      const teks = mainContent.innerText || mainContent.textContent;
+
+      // 4. Buat objek suara
+      const suara = new SpeechSynthesisUtterance(teks);
+      
+      // 5. Atur bahasa ke Indonesia
+      suara.lang = 'id-ID';
+      suara.rate = 1; // Kecepatan normal
+      suara.pitch = 1; // Nada normal
+
+      // 6. Mulai bacakan
+      window.speechSynthesis.speak(suara);
+    }
   </script>
 </body>
 </html>

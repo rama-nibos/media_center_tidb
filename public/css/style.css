@@ -2819,3 +2819,156 @@ body.light-mode .detail-thumb {
   text-align: center !important;
   margin-right: 12px !important;
 }
+
+/* ============================================
+   AKSESIBILITAS (A11Y)
+   ============================================ */
+
+/* 1. Skip to content (muncul saat tekan Tab pertama kali) */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--neon-cyan, #06b6d4);
+  color: #000;
+  padding: 8px 16px;
+  z-index: 10000;
+  font-weight: bold;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* 2. Focus indicator yang jelas untuk pengguna keyboard */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--neon-yellow, #facc15) !important;
+  outline-offset: 2px !important;
+}
+
+/* 3. Class untuk screen reader (teks disembunyikan visual, tapi dibaca mesin) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================
+   AKSESIBILITAS WIDGET
+   ============================================ */
+
+/* 1. Tombol Bulat ♿ */
+.a11y-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10000;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50%;
+  background: var(--neon-cyan, #06b6d4);
+  color: #0a0a0a;
+  border: none;
+  cursor: pointer;
+  font-size: 24px !important;
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.5);
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.a11y-btn:hover {
+  transform: scale(1.1);
+  background: var(--neon-yellow, #facc15);
+  box-shadow: 0 4px 20px rgba(250, 204, 21, 0.7);
+}
+
+/* 2. Panel Menu (Kotaknya) */
+.a11y-panel {
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  background: var(--dark-card, #121212);
+  border: 1px solid var(--neon-cyan, #06b6d4);
+  padding: 16px !important; /* Kunci padding */
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px !important; /* Kunci jarak antar tombol */
+  width: 180px !important; /* Kunci lebar panel */
+}
+
+/* 3. Teks Header di Panel */
+.a11y-header {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px !important; /* Kunci ukuran teks */
+  font-weight: 700;
+  color: var(--neon-cyan, #06b6d4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px !important;
+  border-bottom: 1px solid var(--dark-border, #2a2a2a);
+  padding-bottom: 8px !important;
+}
+
+/* 4. Tombol di dalam Panel (A+, A-, dll) */
+.a11y-panel button {
+  padding: 10px !important; /* Kunci padding */
+  background: transparent;
+  color: var(--text-light, #e2e8f0);
+  border: 1px solid var(--dark-border, #2a2a2a);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-sans, sans-serif);
+  font-size: 13px !important; /* Kunci ukuran teks */
+  text-align: left;
+  transition: all 0.2s;
+}
+.a11y-panel button:hover {
+  background: rgba(6, 182, 212, 0.1);
+  border-color: var(--neon-cyan, #06b6d4);
+  color: var(--neon-cyan, #06b6d4);
+}
+/* Tombol Baca Halaman */
+.a11y-panel button[onclick="bacakanHalaman()"] {
+  border-color: var(--neon-yellow, #facc15);
+  color: var(--neon-yellow, #facc15);
+}
+.a11y-panel button[onclick="bacakanHalaman()"]:hover {
+  background: rgba(250, 204, 21, 0.1);
+}
+
+/* 5. Light Mode Support */
+body.light-mode .a11y-panel {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+body.light-mode .a11y-header {
+  color: #0891b2;
+  border-bottom-color: #e2e8f0;
+}
+body.light-mode .a11y-panel button {
+  color: #1e293b;
+  border-color: #e2e8f0;
+}
+body.light-mode .a11y-panel button:hover {
+  background: #f1f5f9;
+  color: #0891b2;
+}
+
+/* 6. Mode Kontras Tinggi */
+body.high-contrast {
+  filter: contrast(130%) grayscale(100%) !important;
+}

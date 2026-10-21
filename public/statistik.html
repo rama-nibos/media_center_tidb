@@ -50,7 +50,7 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main-content">
     <h2 style="margin: 32px 0 8px;">📊 Statistik Media Center</h2>
     <p style="color: #64748b; margin-bottom: 24px;">Ringkasan data berita dan aktivitas Media Center HST.</p>
 
@@ -77,52 +77,39 @@
     </section>
   </main>
 
- <footer class="footer-main">
-  <div class="footer-container">
-    <div class="footer-col">
-      <h3>MAPS</h3>
-      <div class="footer-map">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid"
-          width="100%" 
-          height="220" 
-          style="border:0;border-radius:4px;" 
-          allowfullscreen 
-          loading="lazy" 
-          referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="profil.html">Profil Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
       </div>
     </div>
-
-    <div class="footer-col">
-      <h3>LINK TERKAIT</h3>
-      <ul class="footer-links">
-        <li><a href="profil.html">Profil Kami</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
-        <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
     </div>
-
-    <div class="footer-col">
-      <h3>KONTAK KAMI</h3>
-      <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
-      <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
-  </div>
-</footer>
+  </footer>
 
   <script src="js/tidb.js"></script>
   <script>
     function escapeHTML(str) {
       if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     function renderChartBar(dataPerKategori) {
@@ -132,12 +119,7 @@
         type: 'bar',
         data: {
           labels: Object.keys(dataPerKategori),
-          datasets: [{
-            label: 'Jumlah Berita',
-            data: Object.values(dataPerKategori),
-            backgroundColor: warna.slice(0, Object.keys(dataPerKategori).length),
-            borderRadius: 8,
-          }]
+          datasets: [{ label: 'Jumlah Berita', data: Object.values(dataPerKategori), backgroundColor: warna.slice(0, Object.keys(dataPerKategori).length), borderRadius: 8 }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
       });
@@ -180,28 +162,20 @@
 
     async function init() {
       try {
-        // Ambil 100 berita terbaru dari TiDB
         const list100 = await apiGetBeritaPaged({ per_page: 100 });
         console.log('✅ Loaded', list100.length, 'berita');
 
-// Ambil dari DB
-try {
-  const res = await fetch('/api/stats');
-  const stat = await res.json();
+        try {
+          const res = await fetch('/api/stats');
+          const stat = await res.json();
+          const totalBerita = document.getElementById('statTotalBerita');
+          if (totalBerita) totalBerita.textContent = stat.total_berita.toLocaleString('id-ID');
+          const totalKlarifikasi = document.getElementById('statTotalKlarifikasi');
+          if (totalKlarifikasi) totalKlarifikasi.textContent = stat.total_klarifikasi.toLocaleString('id-ID');
+          const totalKategori = document.getElementById('statTotalKategori');
+          if (totalKategori) totalKategori.textContent = stat.total_kategori.toLocaleString('id-ID');
+        } catch (e) { console.error('Stats error:', e); }
 
-  const totalBerita = document.getElementById('statTotalBerita');
-  if (totalBerita) totalBerita.textContent = stat.total_berita.toLocaleString('id-ID');
-
-  const totalKlarifikasi = document.getElementById('statTotalKlarifikasi');
-  if (totalKlarifikasi) totalKlarifikasi.textContent = stat.total_klarifikasi.toLocaleString('id-ID');
-
-  const totalKategori = document.getElementById('statTotalKategori');
-  if (totalKategori) totalKategori.textContent = stat.total_kategori.toLocaleString('id-ID');
-} catch (e) {
-  console.error('Stats error:', e);
-}
-
-        // Hitung per kategori dari 100 terbaru
         const dataPerKategori = {};
         list100.forEach(b => {
           const k = b.kategori_id || b.kategori || 'Umum';
@@ -212,14 +186,10 @@ try {
         const statKategori = document.getElementById('statTotalKategori');
         if (statKategori) statKategori.textContent = kategoriUnik;
 
-        // Chart
         renderChartBar(dataPerKategori);
         renderChartDoughnut(dataPerKategori);
-
-        // Tabel
         renderTabel(list100);
 
-        // Pengunjung
         try {
           const jumlah = await apiIncrementPengunjung();
           const el = document.getElementById('statPengunjung');
@@ -238,6 +208,67 @@ try {
       }
     }
     init();
+  </script>
+
+  <!-- AKSESIBILITAS -->
+  <button id="a11yToggle" class="a11y-btn" aria-label="Buka menu aksesibilitas">♿</button>
+    <div id="a11yPanel" class="a11y-panel" style="display:none;">
+    <div class="a11y-header">Aksesibilitas</div>
+    <button onclick="ubahFontSize(1)" aria-label="Perbesar teks">🔍 Perbesar teks</button>
+    <button onclick="ubahFontSize(-1)" aria-label="Perkecil teks">🔎 Perkecil teks</button>
+    <button onclick="toggleKontras()" aria-label="Mode kontras tinggi">🌓 Kontras Tinggi</button>
+    <button onclick="bacakanHalaman()" aria-label="Bacakan halaman dengan suara">🔊 Baca Halaman</button>
+    <button onclick="resetA11y()" aria-label="Reset pengaturan">🔄 Reset</button>
+  </div>
+  <script>
+    (function() {
+      const btn = document.getElementById('a11yToggle');
+      const panel = document.getElementById('a11yPanel');
+      if (btn && panel) btn.addEventListener('click', () => { panel.style.display = panel.style.display === 'none' ? 'flex' : 'none'; });
+      const savedSize = localStorage.getItem('a11yFontSize');
+      if (savedSize) document.documentElement.style.fontSize = savedSize + '%';
+      if (localStorage.getItem('a11yContrast') === 'true') document.body.classList.add('high-contrast');
+    })();
+    let currentSize = parseInt(localStorage.getItem('a11yFontSize')) || 100;
+    function ubahFontSize(delta) { currentSize = Math.max(80, Math.min(150, currentSize + (delta * 10))); document.documentElement.style.fontSize = currentSize + '%'; localStorage.setItem('a11yFontSize', currentSize); }
+    function toggleKontras() { document.body.classList.toggle('high-contrast'); localStorage.setItem('a11yContrast', document.body.classList.contains('high-contrast')); }
+    function resetA11y() { currentSize = 100; document.documentElement.style.fontSize = '100%'; document.body.classList.remove('high-contrast'); localStorage.removeItem('a11yFontSize'); localStorage.removeItem('a11yContrast'); }
+        // ============================================
+    // MODE SUARA (Text-to-Speech)
+    // ============================================
+         function bacakanHalaman() {
+      if (!('speechSynthesis' in window)) {
+        alert('Browser Anda tidak mendukung fitur baca suara.');
+        return;
+      }
+
+      // Paksa berhenti dulu kalau ada suara yang nyangkut
+      window.speechSynthesis.cancel();
+
+      // Ambil teks dari elemen-elemen spesifik (jangan seluruh <main>)
+      const judul = document.querySelector('h2') ? document.querySelector('h2').innerText : '';
+      const totalBerita = document.getElementById('statTotalBerita') ? document.getElementById('statTotalBerita').innerText : '0';
+      const totalKlarifikasi = document.getElementById('statTotalKlarifikasi') ? document.getElementById('statTotalKlarifikasi').innerText : '0';
+      const totalKategori = document.getElementById('statTotalKategori') ? document.getElementById('statTotalKategori').innerText : '0';
+      const totalPengunjung = document.getElementById('statPengunjung') ? document.getElementById('statPengunjung').innerText : '0';
+      const judulTabel = document.querySelector('.tabel-section h3') ? document.querySelector('.tabel-section h3').innerText : '';
+
+      // Susun jadi kalimat yang enak didengar
+      let teks = `${judul}. `;
+      teks += `Total Berita ada ${totalBerita}. `;
+      teks += `Klarifikasi ada ${totalKlarifikasi}. `;
+      teks += `Kategori ada ${totalKategori}. `;
+      teks += `Pengunjung hari ini ${totalPengunjung}. `;
+      teks += `${judulTabel}.`;
+
+      // Buat objek suara
+      const suara = new SpeechSynthesisUtterance(teks);
+      suara.lang = 'id-ID'; 
+      suara.rate = 1;
+
+      // Putar
+      window.speechSynthesis.speak(suara);
+    }
   </script>
 </body>
 </html>

@@ -8,39 +8,13 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .load-more-wrapper {
-      display: flex; justify-content: center; align-items: center;
-      flex-direction: column; gap: 12px; margin: 40px 0 60px;
-    }
-    .btn-load-more {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 14px 36px; background: transparent;
-      color: #ef4444;
-      border: 2px solid #ef4444;
-      border-radius: 100px;
-      font-family: var(--font-mono, monospace);
-      font-size: 0.82rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      cursor: pointer; transition: all 0.3s ease;
-      box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
-      position: relative; overflow: hidden;
-    }
-    .btn-load-more::before {
-      content: ''; position: absolute; top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(239,68,68,0.3), transparent);
-      transition: left 0.5s;
-    }
+    .load-more-wrapper { display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 12px; margin: 40px 0 60px; }
+    .btn-load-more { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; background: transparent; color: #ef4444; border: 2px solid #ef4444; border-radius: 100px; font-family: var(--font-mono, monospace); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); position: relative; overflow: hidden; }
+    .btn-load-more::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(239,68,68,0.3), transparent); transition: left 0.5s; }
     .btn-load-more:hover::before { left: 100%; }
-    .btn-load-more:hover {
-      background: #ef4444; color: #ffffff;
-      box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); transform: translateY(-2px);
-    }
+    .btn-load-more:hover { background: #ef4444; color: #ffffff; box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); transform: translateY(-2px); }
     .btn-load-more:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .load-more-info {
-      font-family: var(--font-mono, monospace); font-size: 0.72rem;
-      color: var(--text-muted, #94a3b8); letter-spacing: 0.08em; text-transform: uppercase;
-    }
+    .load-more-info { font-family: var(--font-mono, monospace); font-size: 0.72rem; color: var(--text-muted, #94a3b8); letter-spacing: 0.08em; text-transform: uppercase; }
     body.light-mode .btn-load-more { color: #dc2626; border-color: #dc2626; }
     body.light-mode .btn-load-more:hover { background: #dc2626; color: #ffffff; }
   </style>
@@ -81,7 +55,7 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main-content">
     <h2 style="margin: 32px 0 8px;">🔍 Klarifikasi & Info Hoaks</h2>
     <p style="color: #64748b; margin-bottom: 24px;">Daftar klarifikasi resmi dari Diskominfo HST terhadap informasi yang beredar di masyarakat.</p>
 
@@ -99,58 +73,40 @@
   </main>
 
   <footer class="footer-main">
-  <div class="footer-container">
-    <div class="footer-col">
-      <h3>MAPS</h3>
-      <div class="footer-map">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid"
-          width="100%" 
-          height="220" 
-          style="border:0;border-radius:4px;" 
-          allowfullscreen 
-          loading="lazy" 
-          referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="profil.html">Profil Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
       </div>
     </div>
-
-    <div class="footer-col">
-      <h3>LINK TERKAIT</h3>
-      <ul class="footer-links">
-        <li><a href="profil.html">Profil Kami</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
-        <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
     </div>
-
-    <div class="footer-col">
-      <h3>KONTAK KAMI</h3>
-      <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
-      <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
-  </div>
-</footer>
+  </footer>
 
   <script src="js/tidb.js"></script>
   <script>
-    // ============================================
-    // KONFIGURASI
-    // ============================================
     const ITEMS_PER_PAGE_AWAL = 12;
     const ITEMS_PER_LOAD = 12;
-
     let dataKlarifikasi = [];
     let jumlahDitampilkan = 0;
 
-    // ============================================
-    // HELPER
-    // ============================================
     function stripHTML(html) {
       if (!html) return '';
       const tmp = document.createElement('div');
@@ -160,35 +116,25 @@
 
     function escapeHTML(str) {
       if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     function getGambarKlarifikasi(b) {
-      // Hoax pakai folder foto_kotaku
       const url = window.urlGambar ? window.urlGambar('hoaks', b.foto) : null;
       return url || "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23ef4444' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-family='sans-serif' font-size='20' text-anchor='middle' dy='.35em'%3EKlarifikasi%3C/text%3E%3C/svg%3E";
     }
 
-    // ============================================
-    // RENDER KARTU
-    // ============================================
     function kartuKlarifikasi(b) {
       const gambar = getGambarKlarifikasi(b);
       const isi = stripHTML(b.isi).slice(0, 160);
       const judul = b.title || 'Tanpa Judul';
       const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
-
-      // Link ke halaman detail HST asli (buka tab baru)
       const id = b.id || b.id_hoaks;
       const linkDetail = `klarifikasi-detail.html?id=${id}`;
 
       return `
         <article class="berita-card">
-          <div class="berita-thumb">
-            <img src="${gambar}" alt="${escapeHTML(judul)}" loading="lazy">
-          </div>
+          <div class="berita-thumb"><img src="${gambar}" alt="${escapeHTML(judul)}" loading="lazy"></div>
           <div class="berita-body">
             <span class="badge" style="background: transparent; color: #ef4444; border-color: #ef4444;">KLARIFIKASI</span>
             <h3>${escapeHTML(judul)}</h3>
@@ -200,22 +146,17 @@
       `;
     }
 
-    // ============================================
-    // MUAT LEBIH BANYAK
-    // ============================================
     function muatLebihBanyak(jumlah) {
       const container = document.getElementById('klarifikasiList');
       const start = jumlahDitampilkan;
       const end = Math.min(start + jumlah, dataKlarifikasi.length);
       const slice = dataKlarifikasi.slice(start, end);
-
       container.insertAdjacentHTML('beforeend', slice.map(kartuKlarifikasi).join(''));
       jumlahDitampilkan = end;
 
       const wrapper = document.getElementById('loadMoreWrapper');
       const btn = document.getElementById('btnLoadMore');
       const info = document.getElementById('loadMoreInfo');
-
       wrapper.style.display = 'flex';
       info.textContent = `Menampilkan ${jumlahDitampilkan} dari ${dataKlarifikasi.length} klarifikasi`;
 
@@ -228,35 +169,22 @@
       }
     }
 
-    // ============================================
-    // LOAD KLARIFIKASI
-    // ============================================
     async function loadKlarifikasi() {
       const container = document.getElementById('klarifikasiList');
       const loadingEl = document.getElementById('loadingPage');
-
       try {
         container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">⏳ Memuat data...</p>';
-
         const list = await apiGetKlarifikasiPaged({ page: 1, per_page: 1000 });
-        console.log('✅ Loaded', list.length, 'klarifikasi dari HST');
-
         if (!list || list.length === 0) {
           container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">Belum ada klarifikasi.</p>';
           if (loadingEl) loadingEl.classList.add('hidden');
           return;
         }
-
-        // Sortir terbaru
         dataKlarifikasi = [...list].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
         jumlahDitampilkan = 0;
         container.innerHTML = '';
-
-        // Render awal 6
         muatLebihBanyak(ITEMS_PER_PAGE_AWAL);
-
       } catch (err) {
-        console.error('❌ Error:', err);
         container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Gagal memuat data. Cek server.</p>';
         document.getElementById('loadMoreWrapper').style.display = 'none';
       } finally {
@@ -264,18 +192,67 @@
       }
     }
 
-    // ============================================
-    // EVENT LISTENER
-    // ============================================
     document.getElementById('btnLoadMore').addEventListener('click', function () {
       muatLebihBanyak(ITEMS_PER_LOAD);
     });
 
-    // ============================================
-    // JALANKAN
-    // ============================================
     loadKlarifikasi();
-    // Jam, progress bar, dark mode di-handle oleh js/tidb.js
+  </script>
+
+  <!-- AKSESIBILITAS -->
+  <button id="a11yToggle" class="a11y-btn" aria-label="Buka menu aksesibilitas">♿</button>
+    <div id="a11yPanel" class="a11y-panel" style="display:none;">
+    <div class="a11y-header">Aksesibilitas</div>
+    <button onclick="ubahFontSize(1)" aria-label="Perbesar teks">🔍 Perbesar teks</button>
+    <button onclick="ubahFontSize(-1)" aria-label="Perkecil teks">🔎 Perkecil teks</button>
+    <button onclick="toggleKontras()" aria-label="Mode kontras tinggi">🌓 Kontras Tinggi</button>
+    <button onclick="bacakanHalaman()" aria-label="Bacakan halaman dengan suara">🔊 Baca Halaman</button>
+    <button onclick="resetA11y()" aria-label="Reset pengaturan">🔄 Reset</button>
+  </div>
+  <script>
+    (function() {
+      const btn = document.getElementById('a11yToggle');
+      const panel = document.getElementById('a11yPanel');
+      if (btn && panel) btn.addEventListener('click', () => { panel.style.display = panel.style.display === 'none' ? 'flex' : 'none'; });
+      const savedSize = localStorage.getItem('a11yFontSize');
+      if (savedSize) document.documentElement.style.fontSize = savedSize + '%';
+      if (localStorage.getItem('a11yContrast') === 'true') document.body.classList.add('high-contrast');
+    })();
+    let currentSize = parseInt(localStorage.getItem('a11yFontSize')) || 100;
+    function ubahFontSize(delta) { currentSize = Math.max(80, Math.min(150, currentSize + (delta * 10))); document.documentElement.style.fontSize = currentSize + '%'; localStorage.setItem('a11yFontSize', currentSize); }
+    function toggleKontras() { document.body.classList.toggle('high-contrast'); localStorage.setItem('a11yContrast', document.body.classList.contains('high-contrast')); }
+    function resetA11y() { currentSize = 100; document.documentElement.style.fontSize = '100%'; document.body.classList.remove('high-contrast'); localStorage.removeItem('a11yFontSize'); localStorage.removeItem('a11yContrast'); }
+        // ============================================
+    // MODE SUARA (Text-to-Speech)
+    // ============================================
+    function bacakanHalaman() {
+      // 1. Cek dukungan browser
+      if (!('speechSynthesis' in window)) {
+        alert('Maaf, browser Anda tidak mendukung fitur baca suara.');
+        return;
+      }
+
+      // 2. Kalau sedang membaca, hentikan (biar bisa toggle)
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        return;
+      }
+
+      // 3. Ambil teks dari halaman (fokus ke tag <main>)
+      const mainContent = document.querySelector('main') || document.body;
+      const teks = mainContent.innerText || mainContent.textContent;
+
+      // 4. Buat objek suara
+      const suara = new SpeechSynthesisUtterance(teks);
+      
+      // 5. Atur bahasa ke Indonesia
+      suara.lang = 'id-ID';
+      suara.rate = 1; // Kecepatan normal
+      suara.pitch = 1; // Nada normal
+
+      // 6. Mulai bacakan
+      window.speechSynthesis.speak(suara);
+    }
   </script>
 </body>
 </html>

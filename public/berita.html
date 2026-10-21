@@ -8,40 +8,100 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .load-more-wrapper {
-      display: flex; justify-content: center; align-items: center;
-      flex-direction: column; gap: 12px; margin: 40px 0 60px;
+        /* ============================================
+       CUSTOM DROPDOWN FILTER
+       ============================================ */
+    .filter-dropdown-wrapper {
+      position: relative;
+      margin-bottom: 24px;
+      display: inline-block;
     }
-    .btn-load-more {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 14px 36px; background: transparent;
-      color: var(--neon-cyan, #06b6d4);
-      border: 2px solid var(--neon-cyan, #06b6d4);
+    .filter-dropdown-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--dark-card, #121212);
+      color: var(--text-light, #e2e8f0);
+      border: 1px solid var(--dark-border, #2a2a2a);
       border-radius: 100px;
       font-family: var(--font-mono, monospace);
-      font-size: 0.82rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      cursor: pointer; transition: all 0.3s ease;
-      box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
-      position: relative; overflow: hidden;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.3s;
     }
-    .btn-load-more::before {
-      content: ''; position: absolute; top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(6,182,212,0.3), transparent);
-      transition: left 0.5s;
+    .filter-dropdown-btn:hover {
+      border-color: var(--neon-cyan, #06b6d4);
+      color: var(--neon-cyan, #06b6d4);
     }
+    .filter-dropdown-menu {
+      display: none; /* Awalnya disembunyikan */
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 8px;
+      background: var(--dark-card, #121212);
+      border: 1px solid var(--dark-border, #2a2a2a);
+      border-radius: 8px;
+      min-width: 220px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .filter-dropdown-menu.show {
+      display: block;
+    }
+    .filter-dropdown-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 20px;
+      background: transparent;
+      color: var(--text-light, #e2e8f0);
+      border: none;
+      border-bottom: 1px solid var(--dark-border, #2a2a2a);
+      font-family: var(--font-sans, sans-serif);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-dropdown-item:last-child { border-bottom: none; }
+    .filter-dropdown-item:hover {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--neon-cyan, #06b6d4);
+    }
+    .filter-dropdown-item.active {
+      color: var(--neon-cyan, #06b6d4);
+      font-weight: 700;
+      background: rgba(6, 182, 212, 0.05);
+    }
+
+    /* Light Mode Support */
+    body.light-mode .filter-dropdown-btn,
+    body.light-mode .filter-dropdown-menu {
+      background: #ffffff;
+      border-color: #e2e8f0;
+      color: #0f172a;
+    }
+    body.light-mode .filter-dropdown-item {
+      color: #0f172a;
+      border-bottom-color: #e2e8f0;
+    }
+    body.light-mode .filter-dropdown-item:hover {
+      background: #f1f5f9;
+    }
+    .load-more-wrapper { display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 12px; margin: 40px 0 60px; }
+    .btn-load-more { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; background: transparent; color: var(--neon-cyan, #06b6d4); border: 2px solid var(--neon-cyan, #06b6d4); border-radius: 100px; font-family: var(--font-mono, monospace); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); position: relative; overflow: hidden; }
+    .btn-load-more::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(6,182,212,0.3), transparent); transition: left 0.5s; }
     .btn-load-more:hover::before { left: 100%; }
-    .btn-load-more:hover {
-      background: var(--neon-cyan, #06b6d4); color: #0a0a0a;
-      box-shadow: 0 0 30px rgba(6, 182, 212, 0.8); transform: translateY(-2px);
-    }
+    .btn-load-more:hover { background: var(--neon-cyan, #06b6d4); color: #0a0a0a; box-shadow: 0 0 30px rgba(6, 182, 212, 0.8); transform: translateY(-2px); }
     .btn-load-more:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .btn-load-more i { font-size: 0.9rem; }
-    .load-more-info {
-      font-family: var(--font-mono, monospace); font-size: 0.72rem;
-      color: var(--text-muted, #94a3b8); letter-spacing: 0.08em; text-transform: uppercase;
-    }
+    .load-more-info { font-family: var(--font-mono, monospace); font-size: 0.72rem; color: var(--text-muted, #94a3b8); letter-spacing: 0.08em; text-transform: uppercase; }
     body.light-mode .btn-load-more { color: #0891b2; border-color: #0891b2; box-shadow: 0 0 15px rgba(8, 145, 178, 0.2); }
     body.light-mode .btn-load-more:hover { background: #0891b2; color: #ffffff; }
     body.light-mode .load-more-info { color: #64748b; }
@@ -83,15 +143,20 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main-content">
     <h2 style="margin: 32px 0 16px;">📰 Semua Berita</h2>
 
     <div class="search-box">
       <input type="text" id="searchInput" placeholder="🔍 Cari berita..." autocomplete="off">
     </div>
 
-    <div class="filter-bar" id="filterBar">
-      <button class="filter-btn active" data-kategori="Semua">Semua</button>
+        <div class="filter-dropdown-wrapper">
+      <button id="filterDropdownBtn" class="filter-dropdown-btn">
+        Kategori: <span id="filterSelected">Semua</span> <i class="fas fa-caret-down"></i>
+      </button>
+      <div class="filter-dropdown-menu" id="filterDropdownMenu">
+        <!-- Item akan di-generate oleh JavaScript -->
+      </div>
     </div>
 
     <div class="berita-grid" id="beritaList" style="margin-bottom: 24px; min-height: 400px;">
@@ -108,63 +173,41 @@
   </main>
 
   <footer class="footer-main">
-  <div class="footer-container">
-    <div class="footer-col">
-      <h3>MAPS</h3>
-      <div class="footer-map">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid"
-          width="100%" 
-          height="220" 
-          style="border:0;border-radius:4px;" 
-          allowfullscreen 
-          loading="lazy" 
-          referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>MAPS</h3>
+        <div class="footer-map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid" width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>LINK TERKAIT</h3>
+        <ul class="footer-links">
+          <li><a href="profil.html">Profil Kami</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
+          <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
+          <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>KONTAK KAMI</h3>
+        <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
+        <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
       </div>
     </div>
-
-    <div class="footer-col">
-      <h3>LINK TERKAIT</h3>
-      <ul class="footer-links">
-        <li><a href="profil.html">Profil Kami</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Komdigi</a></li>
-        <li><a href="https://hstkab.go.id" target="_blank">Portal Kabupaten HST</a></li>
-        <li><a href="https://diskominfo.hstkab.go.id" target="_blank">Diskominfo HST</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
     </div>
-
-    <div class="footer-col">
-      <h3>KONTAK KAMI</h3>
-      <p>Jl. Perintis Kemerdekaan, Benawa Tengah, Barabai,<br>Kabupaten Hulu Sungai Tengah, Kalimantan Selatan 71314</p>
-      <p style="margin-top: 16px;"><strong>Phone:</strong> (0517) 3790845<br><strong>Email:</strong> diskominfo@hstkab.go.id</p>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
-  </div>
-</footer>
+  </footer>
 
   <script src="js/tidb.js"></script>
   <script>
-    // ============================================
-    // KONFIGURASI PAGINATION
-    // ============================================
     const PER_PAGE = 12;
-
-    // ============================================
-    // STATE
-    // ============================================
     let pageSekarang = 1;
     let kategoriAktif = '';
     let queryCari = '';
     let semuaBerita = [];
-    let totalBerita = 0;
 
-    // ============================================
-    // HELPER
-    // ============================================
     function getGambarBerita(b) {
       const foto = b.foto || b.gambar || '';
       const url = window.urlGambar ? window.urlGambar('berita', foto) : null;
@@ -184,12 +227,9 @@
       const kategori = b.kategori_id || b.kategori || 'Umum';
       const id = b.id_berita || b.id;
       const tanggal = window.formatTanggal ? window.formatTanggal(b.tanggal) : b.tanggal;
-
       return `
         <article class="berita-card">
-          <div class="berita-thumb">
-            <img src="${getGambarBerita(b)}" alt="${judul}" loading="lazy">
-          </div>
+          <div class="berita-thumb"><img src="${getGambarBerita(b)}" alt="${judul}" loading="lazy"></div>
           <div class="berita-body">
             <span class="badge">${kategori}</span>
             <h3>${judul}</h3>
@@ -201,9 +241,6 @@
       `;
     }
 
-    // ============================================
-    // LOAD BERITA (pagination server-side)
-    // ============================================
     async function loadBerita(reset = false) {
       const container = document.getElementById('beritaList');
       const wrapper = document.getElementById('loadMoreWrapper');
@@ -218,24 +255,15 @@
       }
 
       try {
-        const items = await apiGetBeritaPaged({
-          page: pageSekarang,
-          per_page: PER_PAGE,
-          kategori: kategoriAktif,
-          q: queryCari,
-        });
-
+        const items = await apiGetBeritaPaged({ page: pageSekarang, per_page: PER_PAGE, kategori: kategoriAktif, q: queryCari });
         if (reset) container.innerHTML = '';
-
         if (items.length === 0 && pageSekarang === 1) {
           container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">😕 Tidak ada berita yang cocok.</p>';
           wrapper.style.display = 'none';
           return;
         }
-
         container.insertAdjacentHTML('beforeend', items.map(kartuBerita).join(''));
         semuaBerita = semuaBerita.concat(items);
-
         wrapper.style.display = 'flex';
         info.textContent = `Menampilkan ${semuaBerita.length} berita`;
 
@@ -246,72 +274,133 @@
           btn.disabled = false;
           btn.innerHTML = '<i class="fas fa-arrow-down"></i><span>Muat Lebih Banyak (+' + PER_PAGE + ')</span>';
         }
-
         const loadingEl = document.getElementById('loadingPage');
         if (loadingEl) loadingEl.classList.add('hidden');
-
       } catch (err) {
         console.error('❌ Error:', err);
-        if (reset) {
-          container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Gagal memuat berita. Cek server.</p>';
-        }
+        if (reset) container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Gagal memuat berita. Cek server.</p>';
         const loadingEl = document.getElementById('loadingPage');
         if (loadingEl) loadingEl.classList.add('hidden');
       }
     }
 
-    // ============================================
-    // FILTER KATEGORI (dari TiDB)
-    // ============================================
-    async function initFilterKategori() {
+        async function initFilterKategori() {
       try {
         const res = await fetch('/api/kategori');
         const json = await res.json();
         const kategoriList = json.rows || [];
 
-        const filterBar = document.getElementById('filterBar');
-        filterBar.innerHTML = '<button class="filter-btn active" data-kategori="Semua">Semua</button>' +
-          kategoriList.map(k => `<button class="filter-btn" data-kategori="${k.nama}">${k.nama}</button>`).join('');
+        const menu = document.getElementById('filterDropdownMenu');
+        const btn = document.getElementById('filterDropdownBtn');
+        const textSelected = document.getElementById('filterSelected');
 
-        filterBar.querySelectorAll('.filter-btn').forEach(btn => {
-          btn.addEventListener('click', function () {
-            filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        // Bikin item "Semua" + kategori dari DB
+        menu.innerHTML = '<button class="filter-dropdown-item active" data-kategori="Semua">Semua</button>' +
+          kategoriList.map(k => `<button class="filter-dropdown-item" data-kategori="${k.nama}">${k.nama}</button>`).join('');
+
+        // Toggle buka/tutup menu
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          menu.classList.toggle('show');
+        });
+
+        // Tutup menu kalau klik di luar
+        document.addEventListener('click', function() {
+          menu.classList.remove('show');
+        });
+
+        // Klik item kategori
+        menu.querySelectorAll('.filter-dropdown-item').forEach(item => {
+          item.addEventListener('click', function() {
+            menu.querySelectorAll('.filter-dropdown-item').forEach(i => i.classList.remove('active'));
             this.classList.add('active');
-            kategoriAktif = this.dataset.kategori === 'Semua' ? '' : this.dataset.kategori;
-            loadBerita(true);
+            
+            const kat = this.dataset.kategori;
+            textSelected.textContent = kat;
+            kategoriAktif = kat === 'Semua' ? '' : kat;
+            
+            menu.classList.remove('show'); // Tutup menu
+            loadBerita(true); // Load berita
           });
         });
+
       } catch (err) {
         console.error('Filter error:', err);
       }
     }
 
-    // ============================================
-    // EVENT LISTENER
-    // ============================================
     document.getElementById('btnLoadMore').addEventListener('click', function () {
       pageSekarang++;
       loadBerita(false);
     });
 
-    // Search — debounce 400ms
     let searchTimer = null;
     document.getElementById('searchInput').addEventListener('input', function () {
       clearTimeout(searchTimer);
       const val = this.value;
-      searchTimer = setTimeout(() => {
-        queryCari = val;
-        loadBerita(true);
-      }, 400);
+      searchTimer = setTimeout(() => { queryCari = val; loadBerita(true); }, 400);
     });
 
-    // ============================================
-    // INIT
-    // ============================================
     document.addEventListener('DOMContentLoaded', async () => {
       await initFilterKategori();
       await loadBerita(true);
     });
+  </script>
+
+  <!-- AKSESIBILITAS -->
+  <button id="a11yToggle" class="a11y-btn" aria-label="Buka menu aksesibilitas">♿</button>
+    <div id="a11yPanel" class="a11y-panel" style="display:none;">
+    <div class="a11y-header">Aksesibilitas</div>
+    <button onclick="ubahFontSize(1)" aria-label="Perbesar teks">🔍 Perbesar teks</button>
+    <button onclick="ubahFontSize(-1)" aria-label="Perkecil teks">🔎 Perkecil teks</button>
+    <button onclick="toggleKontras()" aria-label="Mode kontras tinggi">🌓 Kontras Tinggi</button>
+    <button onclick="bacakanHalaman()" aria-label="Bacakan halaman dengan suara">🔊 Baca Halaman</button>
+    <button onclick="resetA11y()" aria-label="Reset pengaturan">🔄 Reset</button>
+  </div>
+  <script>
+    (function() {
+      const btn = document.getElementById('a11yToggle');
+      const panel = document.getElementById('a11yPanel');
+      if (btn && panel) btn.addEventListener('click', () => { panel.style.display = panel.style.display === 'none' ? 'flex' : 'none'; });
+      const savedSize = localStorage.getItem('a11yFontSize');
+      if (savedSize) document.documentElement.style.fontSize = savedSize + '%';
+      if (localStorage.getItem('a11yContrast') === 'true') document.body.classList.add('high-contrast');
+    })();
+    let currentSize = parseInt(localStorage.getItem('a11yFontSize')) || 100;
+    function ubahFontSize(delta) { currentSize = Math.max(80, Math.min(150, currentSize + (delta * 10))); document.documentElement.style.fontSize = currentSize + '%'; localStorage.setItem('a11yFontSize', currentSize); }
+    function toggleKontras() { document.body.classList.toggle('high-contrast'); localStorage.setItem('a11yContrast', document.body.classList.contains('high-contrast')); }
+    function resetA11y() { currentSize = 100; document.documentElement.style.fontSize = '100%'; document.body.classList.remove('high-contrast'); localStorage.removeItem('a11yFontSize'); localStorage.removeItem('a11yContrast'); }
+        // ============================================
+    // MODE SUARA (Text-to-Speech)
+    // ============================================
+    function bacakanHalaman() {
+      // 1. Cek dukungan browser
+      if (!('speechSynthesis' in window)) {
+        alert('Maaf, browser Anda tidak mendukung fitur baca suara.');
+        return;
+      }
+
+      // 2. Kalau sedang membaca, hentikan (biar bisa toggle)
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        return;
+      }
+
+      // 3. Ambil teks dari halaman (fokus ke tag <main>)
+      const mainContent = document.querySelector('main') || document.body;
+      const teks = mainContent.innerText || mainContent.textContent;
+
+      // 4. Buat objek suara
+      const suara = new SpeechSynthesisUtterance(teks);
+      
+      // 5. Atur bahasa ke Indonesia
+      suara.lang = 'id-ID';
+      suara.rate = 1; // Kecepatan normal
+      suara.pitch = 1; // Nada normal
+
+      // 6. Mulai bacakan
+      window.speechSynthesis.speak(suara);
+    }
   </script>
 </body>
 </html>
