@@ -3,7 +3,7 @@
    Retro Futuristic + Shimmer Buttons
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
 
 /* ====== VARIABEL WARNA ====== */
 :root {
@@ -12,18 +12,26 @@
   --neon-yellow: #facc15;
   --neon-pink: #ec4899;
   --neon-purple: #a855f7;
-  --dark-bg: #0a0a0a;
-  --dark-card: #121212;
-  --dark-card-2: #1a1a1a;
-  --dark-border: #2a2a2a;
-  --text-light: #e2e8f0;
-  --text-muted: #94a3b8;
+  
+  /* Background & Card */
+   --dark-bg: #0f172a; /* Dark Slate */
+  --dark-card: #1e293b; /* Card sedikit lebih terang */
+  --dark-card-2: #334155;
+  --dark-border: #334155;
+  
+  /* Text Colors (Soft White) */
+  --text-light: #cbd5e1; /* Abu terang, tidak menyilaukan */
+  --text-muted: #94a3b8; /* Abu redup untuk teks sekunder */
   --text-dark: #0f172a;
   --white: #ffffff;
+  
+  /* Shadows */
   --shadow-neon-cyan: 0 0 20px rgba(6, 182, 212, 0.5);
   --shadow-neon-magenta: 0 0 20px rgba(217, 70, 239, 0.5);
   --shadow-neon-yellow: 0 0 20px rgba(250, 204, 21, 0.5);
-  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+  
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, sans-serif;
   --font-display: 'Orbitron', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -50,6 +58,7 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
   letter-spacing: 0.02em;
   font-weight: 700;
+  color: #f1f5f9; /* Heading lebih terang dikit dari teks biasa */
 }
 a { color: inherit; text-decoration: none; transition: all 0.3s ease; }
 img { max-width: 100%; display: block; }
@@ -485,9 +494,9 @@ nav a.active {
   box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
 }
 .berita-thumb {
-  height: 200px;              /* sudah ada */
-  aspect-ratio: 16 / 9;       /* ← TAMBAH */
-  background: var(--dark-card-2, #1a1a1a); /* placeholder */
+  height: 200px;
+  aspect-ratio: 16 / 9;
+  background: var(--dark-card-2);
   overflow: hidden;
 }
 .berita-thumb::after {
@@ -528,7 +537,7 @@ nav a.active {
   font-family: var(--font-sans);
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--text-light);
+  color: #f1f5f9;
   line-height: 1.4;
   margin-bottom: 12px;
   transition: color 0.3s;
@@ -820,8 +829,8 @@ nav a.active {
 }
 .detail-thumb {
   width: 100%;
-  aspect-ratio: 16 / 9;       /* ← TAMBAH */
-  background: var(--dark-card-2, #1a1a1a);
+  aspect-ratio: 16 / 9;
+  background: var(--dark-card-2);
   overflow: hidden;
 }
 .detail-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -1849,18 +1858,17 @@ nav a.active {
 .loading-page {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  background: var(--dark-bg);
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.2) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(217, 70, 239, 0.2) 0%, transparent 40%);
   display: flex;
   align-items: center;
   justify-content: center;
-  /* ...background, dll... */
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  z-index: 99999;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
-.loading-page.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
+.loading-page.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .loading-content {
   text-align: center;
   color: var(--text-light);
@@ -2354,6 +2362,7 @@ body.light-mode .footer-main { background: #0a0a0a; color: var(--text-muted); }
   .stat-card h3 { font-size: 1.5rem; }
   .stat-card p { font-size: 0.65rem; }
 }
+
 /* ============================================
    FLOATING MENU KANAN (FAB)
    ============================================ */
@@ -2685,6 +2694,7 @@ body.light-mode .fab-item {
   color: #ffffff !important;
 }
 body.light-mode .fab-item:hover { background: #2b7fc4 !important; }
+
 /* ============================================
    LOADING PAGE — LIGHT MODE
    ============================================ */
@@ -2791,6 +2801,7 @@ body.light-mode .detail-thumb {
 .tabel-section {
   animation: none !important;
 }
+
 /* ============================================
    FIX SIDEBAR ADMIN — Rata kiri
    ============================================ */
@@ -2971,4 +2982,59 @@ body.light-mode .a11y-panel button:hover {
 /* 6. Mode Kontras Tinggi */
 body.high-contrast {
   filter: contrast(130%) grayscale(100%) !important;
+}
+
+/* ============================================
+   PERBAIKAN READABILITY (Teks Lebih Nyaman Dibaca)
+   ============================================ */
+
+/* 1. Warna Teks Global (Soft White) */
+body {
+  color: #cbd5e1 !important; /* Abu-abu terang, tidak menyilaukan */
+}
+
+/* 2. Warna Judul & Heading */
+h1, h2, h3, h4, h5, h6 {
+  color: #f8fafc !important; /* Tetap terang tapi tidak putih menyala */
+  line-height: 1.3 !important;
+}
+
+/* 3. Warna Teks Paragraf & List */
+p, li, span, small {
+  color: #cbd5e1 !important;
+  line-height: 1.8 !important; /* Jarak antar baris lebih lega */
+  letter-spacing: 0.01em !important;
+}
+
+/* 4. Warna di dalam Card Berita */
+.berita-card h3 {
+  color: #f1f5f9 !important;
+}
+.berita-card .ringkasan {
+  color: #94a3b8 !important; /* Abu-abu agak gelap untuk teks sekunder */
+}
+
+/* 5. Warna teks di Sidebar */
+.sidebar-card h3 {
+  color: var(--neon-cyan, #06b6d4) !important; /* Judul sidebar tetap nyala */
+}
+.sidebar-card p,
+.populer-list a {
+  color: #cbd5e1 !important;
+}
+
+/* 6. Light Mode (Kalau tema terang diaktifkan) */
+body.light-mode {
+  color: #334155 !important;
+}
+body.light-mode h1, 
+body.light-mode h2, 
+body.light-mode h3,
+body.light-mode p,
+body.light-mode li,
+body.light-mode span {
+  color: #0f172a !important;
+}
+body.light-mode .berita-card .ringkasan {
+  color: #475569 !important;
 }
