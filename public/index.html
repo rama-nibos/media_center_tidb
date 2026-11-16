@@ -9,8 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
-  <body class="admin-body"> <!-- atau <body> biasa -->
-  <!-- TAMBAH INI -->
+<body class="admin-body">
   <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
 
   <div id="loadingPage" class="loading-page">
@@ -119,12 +118,7 @@
       <div class="footer-map">
         <iframe 
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d668.8303996847458!2d115.3940819548!3d-2.59900779597757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de56f021684514d%3A0xe26d98f5c27843c7!2sDinas%20Komunikasi%20dan%20Informatika%20Kab.%20HST!5e1!3m2!1sid!2sid!4v1749694894430!5m2!1sid!2sid"
-          width="100%" 
-          height="220" 
-          style="border:0;border-radius:4px;" 
-          allowfullscreen 
-          loading="lazy" 
-          referrerpolicy="strict-origin-when-cross-origin">
+          width="100%" height="220" style="border:0;border-radius:4px;" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin">
         </iframe>
       </div>
     </div>
@@ -149,9 +143,9 @@
   <div class="footer-bottom">
     <p>Copyright &copy; 2026 <strong>Dinas Komunikasi dan Informatika Kabupaten Hulu Sungai Tengah</strong></p>
   </div>
-</footer>
+  </footer>
 
-    <script src="js/tidb.js"></script>
+  <script src="js/tidb.js"></script>
   <script>
     // ============================================
     // HOME — Load berita terbaru dari TiDB
@@ -191,35 +185,56 @@
           }).join('');
         }
 
-        // Statistik
+        // Statistik Berita & Klarifikasi
         try {
           const res = await fetch('/api/stats');
           const stat = await res.json();
-          document.getElementById('totalBerita').textContent = stat.total_berita.toLocaleString('id-ID');
-          document.getElementById('totalKlarifikasi').textContent = stat.total_klarifikasi.toLocaleString('id-ID');
-        } catch (e) {}
+          // Cek dukungan format baru (data) atau lama
+          const sData = stat.data || stat;
+          document.getElementById('totalBerita').textContent = (sData.total_berita || 0).toLocaleString('id-ID');
+          document.getElementById('totalKlarifikasi').textContent = (sData.total_klarifikasi || 0).toLocaleString('id-ID');
+        } catch (e) {
+          console.warn('Gagal load statistik utama', e);
+        }
 
+        // Statistik Pengunjung (Anti-Gagal)
         try {
           const res = await fetch('/api/pengunjung');
           const json = await res.json();
-          document.getElementById('totalPengunjung').textContent = (json.data.total || 0).toLocaleString('id-ID');
-        } catch (e) {}
+          
+          // Cek apakah server mengirim format baru {data:{total}} atau format lama {jumlah}
+          let angkaPengunjung = 0;
+          if (json.data && typeof json.data.total !== 'undefined') {
+            angkaPengunjung = json.data.total; // Format server baru
+          } else if (typeof json.jumlah !== 'undefined') {
+            angkaPengunjung = json.jumlah;     // Format server lama
+          }
+          
+          document.getElementById('totalPengunjung').textContent = angkaPengunjung.toLocaleString('id-ID');
+        } catch (e) {
+          console.error('Gagal load pengunjung', e);
+          document.getElementById('totalPengunjung').textContent = '0';
+        }
 
         // Populer
         const populerList = document.getElementById('beritaPopuler');
         if (populerList) {
           try {
-            const populer = await fetch('/api/berita-populer?limit=5').then(r => r.json());
+            const populerData = await fetch('/api/berita-populer?limit=5').then(r => r.json());
+            const populer = populerData.data || populerData; // Handle format baru/lama
+            
             if (populer && populer.length > 0) {
               populerList.innerHTML = populer.map((b, i) => `
-                <li><span class="populer-num">${i + 1}</span><a href="berita-detail.html?id=${b.id_berita || b.id}">${b.title || b.judul}</a><small style="color:#94a3b8;font-size:0.75rem;display:block;margin-left:30px;">${b.views} kali dibaca</small></li>
+                <li><span class="populer-num">${i + 1}</span><a href="berita-detail.html?id=${b.id_berita || b.id}">${b.title || b.judul}</a><small style="color:#94a3b8;font-size:0.75rem;display:block;margin-left:30px;">${b.views || 0} kali dibaca</small></li>
               `).join('');
             } else {
               populerList.innerHTML = items.map((b, i) => `
                 <li><span class="populer-num">${i + 1}</span><a href="berita-detail.html?id=${b.id_berita || b.id}">${b.title || b.judul}</a><small style="color:#94a3b8;font-size:0.75rem;display:block;margin-left:30px;">Baru ditambahkan</small></li>
               `).join('');
             }
-          } catch (err) {}
+          } catch (err) {
+            console.warn('Gagal load populer', err);
+          }
         }
 
       } catch (err) {
@@ -227,15 +242,17 @@
         if (container) container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Gagal memuat data. Cek server.</p>';
       }
     }
+    
+    // Jalankan fungsi
     initHome();
   </script>
 
   <!-- ============================================ -->
-  <!-- TOMBOL AKSESIBILITAS — HARUS DI ATAS SCRIPT  -->
+  <!-- AKSESIBILITAS & LOGIC (TIDAK BERUBAH)        -->
   <!-- ============================================ -->
   <button id="a11yToggle" class="a11y-btn" aria-label="Buka menu aksesibilitas">♿</button>
 
-    <div id="a11yPanel" class="a11y-panel" style="display:none;">
+  <div id="a11yPanel" class="a11y-panel" style="display:none;">
     <div class="a11y-header">Aksesibilitas</div>
     <button onclick="ubahFontSize(1)" aria-label="Perbesar teks">🔍 Perbesar teks</button>
     <button onclick="ubahFontSize(-1)" aria-label="Perkecil teks">🔎 Perkecil teks</button>
@@ -244,9 +261,6 @@
     <button onclick="resetA11y()" aria-label="Reset pengaturan">🔄 Reset</button>
   </div>
 
-  <!-- ============================================ -->
-  <!-- AKSESIBILITAS LOGIC — SETELAH HTML TOMBOL    -->
-  <!-- ============================================ -->
   <script>
     (function() {
       const btn = document.getElementById('a11yToggle');
@@ -280,35 +294,21 @@
       localStorage.removeItem('a11yContrast');
     }
 
-        // ============================================
-    // MODE SUARA (Text-to-Speech)
-    // ============================================
     function bacakanHalaman() {
-      // 1. Cek dukungan browser
       if (!('speechSynthesis' in window)) {
         alert('Maaf, browser Anda tidak mendukung fitur baca suara.');
         return;
       }
-
-      // 2. Kalau sedang membaca, hentikan (biar bisa toggle)
       if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         return;
       }
-
-      // 3. Ambil teks dari halaman (fokus ke tag <main>)
       const mainContent = document.querySelector('main') || document.body;
       const teks = mainContent.innerText || mainContent.textContent;
-
-      // 4. Buat objek suara
       const suara = new SpeechSynthesisUtterance(teks);
-      
-      // 5. Atur bahasa ke Indonesia
       suara.lang = 'id-ID';
-      suara.rate = 1; // Kecepatan normal
-      suara.pitch = 1; // Nada normal
-
-      // 6. Mulai bacakan
+      suara.rate = 1; 
+      suara.pitch = 1;
       window.speechSynthesis.speak(suara);
     }
   </script>
