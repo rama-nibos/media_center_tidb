@@ -8,9 +8,113 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-        /* ============================================
-       CUSTOM DROPDOWN FILTER
+    /* ============================================
+       CUSTOM DROPDOWN FILTER & SEARCH BAR
        ============================================ */
+    
+    /* Flexbox untuk menyatukan Search dan Sort */
+    .search-sort-wrapper {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center;
+      flex-wrap: wrap; /* Agar responsif di HP */
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 100px;
+      border: 1px solid var(--dark-border, #2a2a2a);
+      background: var(--dark-card, #121212);
+      color: var(--text-light, #e2e8f0);
+      font-family: var(--font-sans, sans-serif);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--neon-cyan, #06b6d4);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+    }
+
+    /* Gaya untuk Dropdown Urutan */
+    .sort-dropdown-wrapper {
+      position: relative;
+    }
+
+    .sort-dropdown-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--dark-card, #121212);
+      color: var(--text-light, #e2e8f0);
+      border: 1px solid var(--dark-border, #2a2a2a);
+      border-radius: 100px;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .sort-dropdown-btn:hover {
+      border-color: var(--neon-cyan, #06b6d4);
+      color: var(--neon-cyan, #06b6d4);
+    }
+
+    .sort-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--dark-card, #121212);
+      border: 1px solid var(--dark-border, #2a2a2a);
+      border-radius: 8px;
+      min-width: 200px;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .sort-dropdown-menu.show { display: block; }
+
+    .sort-dropdown-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 20px;
+      background: transparent;
+      color: var(--text-light, #e2e8f0);
+      border: none;
+      border-bottom: 1px solid var(--dark-border, #2a2a2a);
+      font-family: var(--font-sans, sans-serif);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sort-dropdown-item:hover {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--neon-cyan, #06b6d4);
+    }
+
+    .sort-dropdown-item.active {
+      color: var(--neon-cyan, #06b6d4);
+      font-weight: 700;
+      background: rgba(6, 182, 212, 0.05);
+    }
+
+    /* Filter Kategori yang lama */
     .filter-dropdown-wrapper {
       position: relative;
       margin-bottom: 24px;
@@ -38,7 +142,7 @@
       color: var(--neon-cyan, #06b6d4);
     }
     .filter-dropdown-menu {
-      display: none; /* Awalnya disembunyikan */
+      display: none;
       position: absolute;
       top: 100%;
       left: 0;
@@ -52,9 +156,7 @@
       z-index: 100;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    .filter-dropdown-menu.show {
-      display: block;
-    }
+    .filter-dropdown-menu.show { display: block; }
     .filter-dropdown-item {
       display: block;
       width: 100%;
@@ -81,19 +183,25 @@
     }
 
     /* Light Mode Support */
+    body.light-mode .search-box input,
+    body.light-mode .sort-dropdown-btn,
+    body.light-mode .sort-dropdown-menu,
     body.light-mode .filter-dropdown-btn,
     body.light-mode .filter-dropdown-menu {
       background: #ffffff;
       border-color: #e2e8f0;
       color: #0f172a;
     }
+    body.light-mode .sort-dropdown-item,
     body.light-mode .filter-dropdown-item {
       color: #0f172a;
       border-bottom-color: #e2e8f0;
     }
+    body.light-mode .sort-dropdown-item:hover,
     body.light-mode .filter-dropdown-item:hover {
       background: #f1f5f9;
     }
+
     .load-more-wrapper { display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 12px; margin: 40px 0 60px; }
     .btn-load-more { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; background: transparent; color: var(--neon-cyan, #06b6d4); border: 2px solid var(--neon-cyan, #06b6d4); border-radius: 100px; font-family: var(--font-mono, monospace); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); position: relative; overflow: hidden; }
     .btn-load-more::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(6,182,212,0.3), transparent); transition: left 0.5s; }
@@ -146,11 +254,24 @@
   <main class="container" id="main-content">
     <h2 style="margin: 32px 0 16px;">📰 Semua Berita</h2>
 
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="🔍 Cari berita..." autocomplete="off">
+    <!-- BAGIAN SEARCH & SORT YANG BARU -->
+    <div class="search-sort-wrapper">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Cari berita..." autocomplete="off">
+      </div>
+      
+      <div class="sort-dropdown-wrapper">
+        <button id="sortDropdownBtn" class="sort-dropdown-btn">
+          <i class="fas fa-sort-amount-down"></i> Urutan: <span id="sortSelected">Terbaru</span> <i class="fas fa-caret-down"></i>
+        </button>
+        <div class="sort-dropdown-menu" id="sortDropdownMenu">
+          <button class="sort-dropdown-item active" data-sort="terbaru">Terbaru ke Terlama</button>
+          <button class="sort-dropdown-item" data-sort="terlama">Terlama ke Terbaru</button>
+        </div>
+      </div>
     </div>
 
-        <div class="filter-dropdown-wrapper">
+    <div class="filter-dropdown-wrapper">
       <button id="filterDropdownBtn" class="filter-dropdown-btn">
         Kategori: <span id="filterSelected">Semua</span> <i class="fas fa-caret-down"></i>
       </button>
@@ -206,6 +327,7 @@
     let pageSekarang = 1;
     let kategoriAktif = '';
     let queryCari = '';
+    let urutanAktif = 'terbaru'; // 'terbaru' atau 'terlama'
     let semuaBerita = [];
 
     function getGambarBerita(b) {
@@ -256,6 +378,14 @@
 
       try {
         const items = await apiGetBeritaPaged({ page: pageSekarang, per_page: PER_PAGE, kategori: kategoriAktif, q: queryCari });
+        
+        // Logika Pengurutan (Sorting)
+        if (urutanAktif === 'terbaru') {
+          items.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+        } else if (urutanAktif === 'terlama') {
+          items.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+        }
+
         if (reset) container.innerHTML = '';
         if (items.length === 0 && pageSekarang === 1) {
           container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">😕 Tidak ada berita yang cocok.</p>';
@@ -284,7 +414,7 @@
       }
     }
 
-        async function initFilterKategori() {
+    async function initFilterKategori() {
       try {
         const res = await fetch('/api/kategori');
         const json = await res.json();
@@ -294,22 +424,18 @@
         const btn = document.getElementById('filterDropdownBtn');
         const textSelected = document.getElementById('filterSelected');
 
-        // Bikin item "Semua" + kategori dari DB
         menu.innerHTML = '<button class="filter-dropdown-item active" data-kategori="Semua">Semua</button>' +
           kategoriList.map(k => `<button class="filter-dropdown-item" data-kategori="${k.nama}">${k.nama}</button>`).join('');
 
-        // Toggle buka/tutup menu
         btn.addEventListener('click', function(e) {
           e.stopPropagation();
           menu.classList.toggle('show');
         });
 
-        // Tutup menu kalau klik di luar
         document.addEventListener('click', function() {
           menu.classList.remove('show');
         });
 
-        // Klik item kategori
         menu.querySelectorAll('.filter-dropdown-item').forEach(item => {
           item.addEventListener('click', function() {
             menu.querySelectorAll('.filter-dropdown-item').forEach(i => i.classList.remove('active'));
@@ -319,14 +445,44 @@
             textSelected.textContent = kat;
             kategoriAktif = kat === 'Semua' ? '' : kat;
             
-            menu.classList.remove('show'); // Tutup menu
-            loadBerita(true); // Load berita
+            menu.classList.remove('show');
+            loadBerita(true);
           });
         });
 
       } catch (err) {
         console.error('Filter error:', err);
       }
+    }
+
+    // LOGIKA UNTUK DROPDOWN URUTAN
+    function initDropdownUrutan() {
+      const btn = document.getElementById('sortDropdownBtn');
+      const menu = document.getElementById('sortDropdownMenu');
+      const textSelected = document.getElementById('sortSelected');
+
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        menu.classList.toggle('show');
+      });
+
+      document.addEventListener('click', function() {
+        menu.classList.remove('show');
+      });
+
+      menu.querySelectorAll('.sort-dropdown-item').forEach(item => {
+        item.addEventListener('click', function() {
+          menu.querySelectorAll('.sort-dropdown-item').forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+          
+          const sort = this.dataset.sort;
+          textSelected.textContent = this.innerText;
+          urutanAktif = sort;
+          
+          menu.classList.remove('show');
+          loadBerita(true); // Muat ulang dengan urutan baru
+        });
+      });
     }
 
     document.getElementById('btnLoadMore').addEventListener('click', function () {
@@ -342,6 +498,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
+      initDropdownUrutan(); // Panggil inisialisasi urutan
       await initFilterKategori();
       await loadBerita(true);
     });
@@ -370,35 +527,22 @@
     function ubahFontSize(delta) { currentSize = Math.max(80, Math.min(150, currentSize + (delta * 10))); document.documentElement.style.fontSize = currentSize + '%'; localStorage.setItem('a11yFontSize', currentSize); }
     function toggleKontras() { document.body.classList.toggle('high-contrast'); localStorage.setItem('a11yContrast', document.body.classList.contains('high-contrast')); }
     function resetA11y() { currentSize = 100; document.documentElement.style.fontSize = '100%'; document.body.classList.remove('high-contrast'); localStorage.removeItem('a11yFontSize'); localStorage.removeItem('a11yContrast'); }
-        // ============================================
-    // MODE SUARA (Text-to-Speech)
-    // ============================================
+        
     function bacakanHalaman() {
-      // 1. Cek dukungan browser
       if (!('speechSynthesis' in window)) {
         alert('Maaf, browser Anda tidak mendukung fitur baca suara.');
         return;
       }
-
-      // 2. Kalau sedang membaca, hentikan (biar bisa toggle)
       if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         return;
       }
-
-      // 3. Ambil teks dari halaman (fokus ke tag <main>)
       const mainContent = document.querySelector('main') || document.body;
       const teks = mainContent.innerText || mainContent.textContent;
-
-      // 4. Buat objek suara
       const suara = new SpeechSynthesisUtterance(teks);
-      
-      // 5. Atur bahasa ke Indonesia
       suara.lang = 'id-ID';
-      suara.rate = 1; // Kecepatan normal
-      suara.pitch = 1; // Nada normal
-
-      // 6. Mulai bacakan
+      suara.rate = 1; 
+      suara.pitch = 1; 
       window.speechSynthesis.speak(suara);
     }
   </script>
