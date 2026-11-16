@@ -105,7 +105,7 @@
     </div>
   </footer>
 
-    <script src="js/tidb.js"></script>
+  <script src="js/tidb.js"></script>
   <script>
     function escapeHTML(str) {
       if (!str) return '';
@@ -166,9 +166,10 @@
         try {
           const res = await fetch('/api/stats');
           const stat = await res.json();
-          if (document.getElementById('statTotalBerita')) document.getElementById('statTotalBerita').textContent = stat.total_berita.toLocaleString('id-ID');
-          if (document.getElementById('statTotalKlarifikasi')) document.getElementById('statTotalKlarifikasi').textContent = stat.total_klarifikasi.toLocaleString('id-ID');
-          if (document.getElementById('statTotalKategori')) document.getElementById('statTotalKategori').textContent = stat.total_kategori.toLocaleString('id-ID');
+          const sData = stat.data || stat; // Handle format baru/lama
+          if (document.getElementById('statTotalBerita')) document.getElementById('statTotalBerita').textContent = (sData.total_berita || 0).toLocaleString('id-ID');
+          if (document.getElementById('statTotalKlarifikasi')) document.getElementById('statTotalKlarifikasi').textContent = (sData.total_klarifikasi || 0).toLocaleString('id-ID');
+          if (document.getElementById('statTotalKategori')) document.getElementById('statTotalKategori').textContent = (sData.total_kategori || 0).toLocaleString('id-ID');
         } catch (e) { console.error('Stats error:', e); }
 
         // 2. Ambil 100 berita terbaru untuk Chart & Tabel
@@ -184,14 +185,27 @@
         renderChartDoughnut(dataPerKategori);
         renderTabel(list100);
 
-        // 3. Ambil Pengunjung
+        // 3. Ambil Pengunjung (TOTAL DARI DATABASE TIDB, BUKAN HARI INI)
         try {
-          const jumlah = await apiIncrementPengunjung();
+          const res = await fetch('/api/pengunjung');
+          const json = await res.json();
+          let angkaPengunjung = 0;
+          
+          // Deteksi format dari server
+          if (typeof json.total !== 'undefined') {
+            angkaPengunjung = json.total; 
+          } else if (json.data && typeof json.data.total !== 'undefined') {
+            angkaPengunjung = json.data.total; 
+          } else if (typeof json.jumlah !== 'undefined') {
+            angkaPengunjung = json.jumlah; 
+          }
+          
           const el = document.getElementById('statPengunjung');
-          if (el) el.textContent = (jumlah || 0).toLocaleString('id-ID');
+          if (el) el.textContent = angkaPengunjung.toLocaleString('id-ID');
         } catch (e) {
+          console.error('Gagal load pengunjung:', e);
           const el = document.getElementById('statPengunjung');
-          if (el) el.textContent = '—';
+          if (el) el.textContent = '0';
         }
 
       } catch (err) {
@@ -228,19 +242,18 @@
     function ubahFontSize(delta) { currentSize = Math.max(80, Math.min(150, currentSize + (delta * 10))); document.documentElement.style.fontSize = currentSize + '%'; localStorage.setItem('a11yFontSize', currentSize); }
     function toggleKontras() { document.body.classList.toggle('high-contrast'); localStorage.setItem('a11yContrast', document.body.classList.contains('high-contrast')); }
     function resetA11y() { currentSize = 100; document.documentElement.style.fontSize = '100%'; document.body.classList.remove('high-contrast'); localStorage.removeItem('a11yFontSize'); localStorage.removeItem('a11yContrast'); }
-        // ============================================
+    
+    // ============================================
     // MODE SUARA (Text-to-Speech)
     // ============================================
-         function bacakanHalaman() {
+    function bacakanHalaman() {
       if (!('speechSynthesis' in window)) {
         alert('Browser Anda tidak mendukung fitur baca suara.');
         return;
       }
 
-      // Paksa berhenti dulu kalau ada suara yang nyangkut
       window.speechSynthesis.cancel();
 
-      // Ambil teks dari elemen-elemen spesifik (jangan seluruh <main>)
       const judul = document.querySelector('h2') ? document.querySelector('h2').innerText : '';
       const totalBerita = document.getElementById('statTotalBerita') ? document.getElementById('statTotalBerita').innerText : '0';
       const totalKlarifikasi = document.getElementById('statTotalKlarifikasi') ? document.getElementById('statTotalKlarifikasi').innerText : '0';
@@ -248,20 +261,17 @@
       const totalPengunjung = document.getElementById('statPengunjung') ? document.getElementById('statPengunjung').innerText : '0';
       const judulTabel = document.querySelector('.tabel-section h3') ? document.querySelector('.tabel-section h3').innerText : '';
 
-      // Susun jadi kalimat yang enak didengar
       let teks = `${judul}. `;
       teks += `Total Berita ada ${totalBerita}. `;
       teks += `Klarifikasi ada ${totalKlarifikasi}. `;
       teks += `Kategori ada ${totalKategori}. `;
-      teks += `Pengunjung hari ini ${totalPengunjung}. `;
+      teks += `Total Pengunjung ada ${totalPengunjung}. `;
       teks += `${judulTabel}.`;
 
-      // Buat objek suara
       const suara = new SpeechSynthesisUtterance(teks);
       suara.lang = 'id-ID'; 
       suara.rate = 1;
 
-      // Putar
       window.speechSynthesis.speak(suara);
     }
   </script>
