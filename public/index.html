@@ -189,7 +189,6 @@
         try {
           const res = await fetch('/api/stats');
           const stat = await res.json();
-          // Cek dukungan format baru (data) atau lama
           const sData = stat.data || stat;
           document.getElementById('totalBerita').textContent = (sData.total_berita || 0).toLocaleString('id-ID');
           document.getElementById('totalKlarifikasi').textContent = (sData.total_klarifikasi || 0).toLocaleString('id-ID');
@@ -197,17 +196,24 @@
           console.warn('Gagal load statistik utama', e);
         }
 
-        // Statistik Pengunjung (Anti-Gagal)
+        // Statistik Pengunjung (Anti-Gagal - Mendeteksi format API apapun)
         try {
           const res = await fetch('/api/pengunjung');
           const json = await res.json();
           
-          // Cek apakah server mengirim format baru {data:{total}} atau format lama {jumlah}
           let angkaPengunjung = 0;
-          if (json.data && typeof json.data.total !== 'undefined') {
-            angkaPengunjung = json.data.total; // Format server baru
-          } else if (typeof json.jumlah !== 'undefined') {
-            angkaPengunjung = json.jumlah;     // Format server lama
+          
+          // Deteksi 1: Format {"total": 239} (Sesuai screenshot Vercel Anda)
+          if (typeof json.total !== 'undefined') {
+            angkaPengunjung = json.total; 
+          } 
+          // Deteksi 2: Format {"data": {"total": 239}}
+          else if (json.data && typeof json.data.total !== 'undefined') {
+            angkaPengunjung = json.data.total; 
+          } 
+          // Deteksi 3: Format {"jumlah": 239} (Format lama)
+          else if (typeof json.jumlah !== 'undefined') {
+            angkaPengunjung = json.jumlah; 
           }
           
           document.getElementById('totalPengunjung').textContent = angkaPengunjung.toLocaleString('id-ID');
@@ -221,7 +227,7 @@
         if (populerList) {
           try {
             const populerData = await fetch('/api/berita-populer?limit=5').then(r => r.json());
-            const populer = populerData.data || populerData; // Handle format baru/lama
+            const populer = populerData.data || populerData; 
             
             if (populer && populer.length > 0) {
               populerList.innerHTML = populer.map((b, i) => `
