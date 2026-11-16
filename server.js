@@ -16,6 +16,37 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ============================================
+// TRACKING PENGUNJUNG
+// ============================================
+app.use(async (req, res, next) => {
+  const skip =
+    req.path.startsWith('/api') ||
+    req.path.startsWith('/api-hst') ||
+    req.path.startsWith('/uploads') ||
+    req.path === '/favicon.ico' ||
+    req.method !== 'GET';
+
+  if (skip) return next();
+
+  const accept = req.headers.accept || '';
+  if (!accept.includes('text/html')) return next();
+
+  try {
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    await pool.execute(
+      `INSERT INTO pengunjung (tanggal, jumlah)
+       VALUES (?, 1)
+       ON DUPLICATE KEY UPDATE jumlah = jumlah + 1`,
+      [today]
+    );
+  } catch (e) {
+    console.error('⚠️ Tracking pengunjung gagal:', e.message);
+  }
+
+  next();
+});
+
 // Folder uploads — hanya di lokal. Vercel read-only, upload pakai Vercel Blob
 const uploadDir = path.join(__dirname, 'uploads');
 
@@ -289,7 +320,7 @@ app.post('/api/berita/:id/view', async (req, res) => {
   try {
     await runQuery('UPDATE berita SET views = views + 1 WHERE id = ?', [req.params.id]);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { res.status(500).json({ error: err.message }); } 
 });
 
 // Endpoint total stats (dari DB)
@@ -305,6 +336,32 @@ app.get('/api/stats', async (req, res) => {
       total_kategori: Number(total_kategori),
     });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ============================================
+// API: STATISTIK PENGUNJUNG (dari TiDB)
+// ============================================
+app.get('/api/pengunjung', async (req, res) => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+
+    const [[{ total }]] = await pool.execute(
+      'SELECT COALESCE(SUM(jumlah), 0) AS total FROM pengunjung'
+    );
+    const [[{ hari_ini }]] = await pool.execute(
+      'SELECT COALESCE(jumlah, 0) AS hari_ini FROM pengunjung WHERE tanggal = ?',
+      [today]
+    );
+
+    res.json({
+      total: Number(total),
+      today: Number(hari_ini),
+      tanggal: today,
+    });
+  } catch (err) {
+    console.error('❌ /api/pengunjung:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
