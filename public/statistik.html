@@ -185,14 +185,13 @@
         renderChartDoughnut(dataPerKategori);
         renderTabel(list100);
 
-                // 3. Ambil Pengunjung (Versi Lama - Harian)
+        // 3. Ambil Pengunjung
         try {
-          const res = await fetch('/api-hst/statistik');
-          const stat = await res.json();
+          const res = await fetch('/api/pengunjung');
+          const json = await res.json();
           const el = document.getElementById('statPengunjung');
-          if (el) el.textContent = (stat.today_visitors || 0).toLocaleString('id-ID');
+          if (el) el.textContent = (json.jumlah || 0).toLocaleString('id-ID');
         } catch (e) {
-          console.error('Gagal load pengunjung:', e);
           const el = document.getElementById('statPengunjung');
           if (el) el.textContent = '0';
         }
