@@ -195,12 +195,16 @@
         } catch (e) {
           console.warn('Gagal load statistik utama', e);
         }
-        // Statistik Pengunjung
+        
+        // Statistik Pengunjung (Reset Harian - Ambil dari API HST)
         try {
-          const res = await fetch('/api/pengunjung');
-          const json = await res.json();
-          document.getElementById('totalPengunjung').textContent = (json.jumlah || 0).toLocaleString('id-ID');
+          const res = await fetch('/api-hst/statistik');
+          const stat = await res.json();
+          // Ambil today_visitors (angka 10 itu)
+          let angka = stat.today_visitors !== undefined ? stat.today_visitors : 0;
+          document.getElementById('totalPengunjung').textContent = angka.toLocaleString('id-ID');
         } catch (e) {
+          console.error('Gagal load pengunjung', e);
           document.getElementById('totalPengunjung').textContent = '0';
         }
 
