@@ -67,7 +67,6 @@ const upload = multer({
   },
 });
 
-
 const dbConfig = {
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT) || 4000,
@@ -179,7 +178,7 @@ app.get('/api-hst/statistik', async (req, res) => {
       const today = new Date().toISOString().split('T')[0];
       const rows = await runQuery('SELECT jumlah FROM pengunjung WHERE tanggal = ?', [today]);
       res.json({
-        total: rows[0]?.jumlah || 1357,
+        total: rows[0]?.jumlah || 0,
         today_visitors: rows[0]?.jumlah || 0,
         today_hits: String(rows[0]?.jumlah || 0),
         online: 1,
@@ -214,7 +213,6 @@ app.get('/api/berita', async (req, res) => {
       params.push(`%${q}%`, `%${q}%`);
     }
 
-    // ⚠️ LIMIT & OFFSET harus angka langsung, bukan `?`
     sql += ` ORDER BY tanggal DESC LIMIT ${perPage} OFFSET ${offset}`;
 
     const [rows] = await pool.execute(sql, params);
@@ -242,7 +240,6 @@ app.get('/api/berita', async (req, res) => {
   }
 });
 
-// Top berita populer (by views)
 app.get('/api/berita-populer', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 5;
@@ -323,7 +320,6 @@ app.post('/api/berita/:id/view', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); } 
 });
 
-// Endpoint total stats (dari DB)
 app.get('/api/stats', async (req, res) => {
   try {
     const [[{ total_berita }]] = await pool.execute('SELECT COUNT(*) AS total_berita FROM berita');
@@ -336,32 +332,6 @@ app.get('/api/stats', async (req, res) => {
       total_kategori: Number(total_kategori),
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ============================================
-// API: STATISTIK PENGUNJUNG (dari TiDB)
-// ============================================
-app.get('/api/pengunjung', async (req, res) => {
-  try {
-    const today = new Date().toISOString().split('T')[0];
-
-    const [[{ total }]] = await pool.execute(
-      'SELECT COALESCE(SUM(jumlah), 0) AS total FROM pengunjung'
-    );
-    const [[{ hari_ini }]] = await pool.execute(
-      'SELECT COALESCE(jumlah, 0) AS hari_ini FROM pengunjung WHERE tanggal = ?',
-      [today]
-    );
-
-    res.json({
-      total: Number(total),
-      today: Number(hari_ini),
-      tanggal: today,
-    });
-  } catch (err) {
-    console.error('❌ /api/pengunjung:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -418,7 +388,6 @@ app.post('/api/rating', async (req, res) => {
       [id_berita, nilai, String(ip).slice(0, 45)]
     );
 
-    // Balikin rata-rata terbaru
     const rows = await runQuery(
       'SELECT COUNT(*) AS jumlah, COALESCE(SUM(nilai), 0) AS total FROM rating WHERE id_berita = ?',
       [id_berita]
@@ -517,29 +486,21 @@ app.delete('/api/klarifikasi/:id', async (req, res) => {
 
 // ============================================
 // API: CRON SYNC — Sinkronisasi Berita dari HST
-// Dipanggil otomatis oleh Vercel Cron
 // ============================================
 app.get('/api/cron/sync-berita', async (req, res) => {
-  // ============ KEAMANAN ============
   const authHeader = req.headers.authorization;
   const secret = process.env.CRON_SECRET;
 
-  // Kalau CRON_SECRET di-set, wajib verifikasi
   if (secret && authHeader !== `Bearer ${secret}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
     console.log('🔄 Cron sync dimulai...');
-
-    // ============ 1. AMBIL DATA DARI HST ============
     const response = await fetch('https://mediacenter.hstkab.go.id/api/berita');
     if (!response.ok) throw new Error(`HST API error: ${response.status}`);
-
     const semuaBeritaHST = await response.json();
-    console.log(`📥 Dapat ${semuaBeritaHST.length} berita dari HST`);
-
-    // ============ 2. AMBIL JUDUL + TANGGAL YANG SUDAH ADA ============
+    
     const [existing] = await pool.execute(
       'SELECT judul, DATE(tanggal) AS tgl FROM berita'
     );
@@ -552,9 +513,7 @@ app.get('/api/cron/sync-berita', async (req, res) => {
         : String(r.tgl).split(' ')[0].split('T')[0];
       setExisting.add(`${judul}|${tgl}`);
     });
-    console.log(`🔍 ${existing.length} berita sudah ada di DB`);
 
-    // ============ 3. INSERT YANG BARU SAJA ============
     let beritaBaru = 0;
     let skip = 0;
     let gagal = 0;
@@ -586,15 +545,11 @@ app.get('/api/cron/sync-berita', async (req, res) => {
           ]
         );
         beritaBaru++;
-        setExisting.add(kunci); // hindari dobel kalau HST punya duplikat
-        console.log(`   ✅ Baru: ${b.title?.slice(0, 60)}...`);
+        setExisting.add(kunci);
       } catch (err) {
         gagal++;
-        console.error(`   ❌ Gagal: ${err.message}`);
       }
     }
-
-    console.log(`📊 Berita baru: ${beritaBaru}, skip: ${skip}, gagal: ${gagal}`);
 
     res.json({
       success: true,
@@ -606,13 +561,12 @@ app.get('/api/cron/sync-berita', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('❌ Cron sync gagal:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
 // ============================================
-// API: PENGUNJUNG
+// API: PENGUNJUNG (FIXED & TUNGGAL)
 // ============================================
 app.post('/api/pengunjung', async (req, res) => {
   try {
@@ -634,12 +588,13 @@ app.get('/api/pengunjung', async (req, res) => {
     const [[{ hari_ini }]] = await pool.execute('SELECT COALESCE(jumlah, 0) AS hari_ini FROM pengunjung WHERE tanggal = ?', [today]);
     
     res.json({
-      jumlah: Number(total), // <--- TAMBAHKAN INI (Agar index.html versi lama bisa membacanya)
+      jumlah: Number(total), 
       total: Number(total),
       today: Number(hari_ini),
       tanggal: today,
     });
   } catch (err) {
+    console.error('❌ /api/pengunjung:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -651,7 +606,6 @@ app.post('/api/upload', upload.single('gambar'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Tidak ada file' });
 
-    // Upload ke Vercel Blob
     const filename = `berita/${Date.now()}-${Math.random().toString(36).slice(2, 8)}${path.extname(req.file.originalname).toLowerCase()}`;
 
     const blob = await put(filename, req.file.buffer, {
@@ -661,7 +615,7 @@ app.post('/api/upload', upload.single('gambar'), async (req, res) => {
 
     res.json({
       success: true,
-      url: blob.url,             // ← URL lengkap dari Vercel Blob (https://...)
+      url: blob.url,             
       filename: blob.pathname,
       size: req.file.size,
     });
