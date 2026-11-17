@@ -185,23 +185,12 @@
         renderChartDoughnut(dataPerKategori);
         renderTabel(list100);
 
-        // 3. Ambil Pengunjung (TOTAL DARI DATABASE TIDB, BUKAN HARI INI)
+                // 3. Ambil Pengunjung (Versi Lama - Harian)
         try {
-          const res = await fetch('/api/pengunjung');
-          const json = await res.json();
-          let angkaPengunjung = 0;
-          
-          // Deteksi format dari server
-          if (typeof json.total !== 'undefined') {
-            angkaPengunjung = json.total; 
-          } else if (json.data && typeof json.data.total !== 'undefined') {
-            angkaPengunjung = json.data.total; 
-          } else if (typeof json.jumlah !== 'undefined') {
-            angkaPengunjung = json.jumlah; 
-          }
-          
+          const res = await fetch('/api-hst/statistik');
+          const stat = await res.json();
           const el = document.getElementById('statPengunjung');
-          if (el) el.textContent = angkaPengunjung.toLocaleString('id-ID');
+          if (el) el.textContent = (stat.today_visitors || 0).toLocaleString('id-ID');
         } catch (e) {
           console.error('Gagal load pengunjung:', e);
           const el = document.getElementById('statPengunjung');

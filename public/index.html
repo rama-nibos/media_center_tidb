@@ -196,27 +196,13 @@
           console.warn('Gagal load statistik utama', e);
         }
 
-        // Statistik Pengunjung (Anti-Gagal - Mendeteksi format API apapun)
+                // Statistik Pengunjung (Versi Lama - Harian)
         try {
-          const res = await fetch('/api/pengunjung');
-          const json = await res.json();
-          
-          let angkaPengunjung = 0;
-          
-          // Deteksi 1: Format {"total": 239} (Sesuai screenshot Vercel Anda)
-          if (typeof json.total !== 'undefined') {
-            angkaPengunjung = json.total; 
-          } 
-          // Deteksi 2: Format {"data": {"total": 239}}
-          else if (json.data && typeof json.data.total !== 'undefined') {
-            angkaPengunjung = json.data.total; 
-          } 
-          // Deteksi 3: Format {"jumlah": 239} (Format lama)
-          else if (typeof json.jumlah !== 'undefined') {
-            angkaPengunjung = json.jumlah; 
-          }
-          
-          document.getElementById('totalPengunjung').textContent = angkaPengunjung.toLocaleString('id-ID');
+          const res = await fetch('/api-hst/statistik');
+          const stat = await res.json();
+          // Ambil today_visitors (harian), kalau tidak ada pakai total
+          let angka = stat.today_visitors !== undefined ? stat.today_visitors : (stat.total || 0);
+          document.getElementById('totalPengunjung').textContent = angka.toLocaleString('id-ID');
         } catch (e) {
           console.error('Gagal load pengunjung', e);
           document.getElementById('totalPengunjung').textContent = '0';

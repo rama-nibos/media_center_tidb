@@ -16,47 +16,13 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ============================================
-// TRACKING PENGUNJUNG
-// ============================================
-app.use(async (req, res, next) => {
-  const skip =
-    req.path.startsWith('/api') ||
-    req.path.startsWith('/api-hst') ||
-    req.path.startsWith('/uploads') ||
-    req.path === '/favicon.ico' ||
-    req.method !== 'GET';
-
-  if (skip) return next();
-
-  const accept = req.headers.accept || '';
-  if (!accept.includes('text/html')) return next();
-
-  try {
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    await pool.execute(
-      `INSERT INTO pengunjung (tanggal, jumlah)
-       VALUES (?, 1)
-       ON DUPLICATE KEY UPDATE jumlah = jumlah + 1`,
-      [today]
-    );
-  } catch (e) {
-    console.error('⚠️ Tracking pengunjung gagal:', e.message);
-  }
-
-  next();
-});
-
 // Folder uploads — hanya di lokal. Vercel read-only, upload pakai Vercel Blob
 const uploadDir = path.join(__dirname, 'uploads');
-
-// Skip bikin folder kalau di Vercel (production)
 if (process.env.NODE_ENV !== 'production') {
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
   app.use('/uploads', express.static(uploadDir));
 }
 
-// Vercel Blob: pakai memoryStorage (bukan disk)
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -73,7 +39,7 @@ const dbConfig = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: { rejectUnauthorized: true },
+  ssl: { rejectUnauthorized: false }, // Dibuat false agar aman dari error SSL Vercel
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -218,19 +184,10 @@ app.get('/api/berita', async (req, res) => {
     const [rows] = await pool.execute(sql, params);
 
     const mapped = rows.map(r => ({
-      id: r.id,
-      id_berita: r.id,
-      title: r.judul,
-      judul: r.judul,
-      kategori_id: r.kategori,
-      kategori: r.kategori,
-      tanggal: r.tanggal,
-      ringkasan: r.ringkasan,
-      isi: r.isi,
-      foto: r.gambar,
-      gambar: r.gambar,
-      tag: r.tag,
-      views: r.views || 0,
+      id: r.id, id_berita: r.id, title: r.judul, judul: r.judul,
+      kategori_id: r.kategori, kategori: r.kategori, tanggal: r.tanggal,
+      ringkasan: r.ringkasan, isi: r.isi, foto: r.gambar, gambar: r.gambar,
+      tag: r.tag, views: r.views || 0,
     }));
 
     res.json(mapped);
@@ -248,18 +205,9 @@ app.get('/api/berita-populer', async (req, res) => {
     );
 
     const mapped = rows.map(r => ({
-      id: r.id,
-      id_berita: r.id,
-      title: r.judul,
-      judul: r.judul,
-      kategori_id: r.kategori,
-      kategori: r.kategori,
-      tanggal: r.tanggal,
-      ringkasan: r.ringkasan,
-      isi: r.isi,
-      foto: r.gambar,
-      gambar: r.gambar,
-      views: r.views || 0,
+      id: r.id, id_berita: r.id, title: r.judul, judul: r.judul,
+      kategori_id: r.kategori, kategori: r.kategori, tanggal: r.tanggal,
+      ringkasan: r.ringkasan, isi: r.isi, foto: r.gambar, gambar: r.gambar, views: r.views || 0,
     }));
 
     res.json(mapped);
@@ -418,17 +366,9 @@ app.get('/api/klarifikasi', async (req, res) => {
     );
 
     const mapped = rows.map(r => ({
-      id: r.id,
-      id_hoaks: r.id_sumber || r.id,
-      title: r.judul,
-      judul: r.judul,
-      slug: r.slug,
-      tanggal: r.tanggal,
-      ringkasan: r.ringkasan,
-      isi: r.isi,
-      foto: r.foto,
-      link: r.link_sumber,
-      views: r.views || 0,
+      id: r.id, id_hoaks: r.id_sumber || r.id, title: r.judul, judul: r.judul,
+      slug: r.slug, tanggal: r.tanggal, ringkasan: r.ringkasan, isi: r.isi,
+      foto: r.foto, link: r.link_sumber, views: r.views || 0,
     }));
 
     res.json(mapped);
@@ -561,40 +501,6 @@ app.get('/api/cron/sync-berita', async (req, res) => {
     });
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ============================================
-// API: PENGUNJUNG (FIXED & TUNGGAL)
-// ============================================
-app.post('/api/pengunjung', async (req, res) => {
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    await runQuery(
-      `INSERT INTO pengunjung (tanggal, jumlah) VALUES (?, 1)
-       ON DUPLICATE KEY UPDATE jumlah = jumlah + 1`,
-      [today]
-    );
-    const rows = await runQuery('SELECT jumlah FROM pengunjung WHERE tanggal = ?', [today]);
-    res.json({ jumlah: rows[0]?.jumlah || 0 });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
-
-app.get('/api/pengunjung', async (req, res) => {
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    const [[{ total }]] = await pool.execute('SELECT COALESCE(SUM(jumlah), 0) AS total FROM pengunjung');
-    const [[{ hari_ini }]] = await pool.execute('SELECT COALESCE(jumlah, 0) AS hari_ini FROM pengunjung WHERE tanggal = ?', [today]);
-    
-    res.json({
-      jumlah: Number(total), 
-      total: Number(total),
-      today: Number(hari_ini),
-      tanggal: today,
-    });
-  } catch (err) {
-    console.error('❌ /api/pengunjung:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
