@@ -630,9 +630,18 @@ app.post('/api/pengunjung', async (req, res) => {
 app.get('/api/pengunjung', async (req, res) => {
   try {
     const today = new Date().toISOString().split('T')[0];
-    const rows = await runQuery('SELECT jumlah FROM pengunjung WHERE tanggal = ?', [today]);
-    res.json({ jumlah: rows[0]?.jumlah || 0 });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+    const [[{ total }]] = await pool.execute('SELECT COALESCE(SUM(jumlah), 0) AS total FROM pengunjung');
+    const [[{ hari_ini }]] = await pool.execute('SELECT COALESCE(jumlah, 0) AS hari_ini FROM pengunjung WHERE tanggal = ?', [today]);
+    
+    res.json({
+      jumlah: Number(total), // <--- TAMBAHKAN INI (Agar index.html versi lama bisa membacanya)
+      total: Number(total),
+      today: Number(hari_ini),
+      tanggal: today,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ============================================
