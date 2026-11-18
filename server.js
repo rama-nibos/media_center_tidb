@@ -32,7 +32,7 @@ const dbConfig = {
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT) || 4000,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD, // Pastikan di Vercel isinya F4GEtuvmLHghJ7WC
+  password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   ssl: { rejectUnauthorized: false },
   waitForConnections: true,
@@ -94,7 +94,7 @@ app.get('/api-hst/statistik', async (req, res) => {
 });
 
 // ============================================
-// API BERITA & LAINNYA
+// API BERITA
 // ============================================
 app.get('/api/berita', async (req, res) => {
   try {
@@ -164,6 +164,9 @@ app.get('/api/kategori', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// ============================================
+// API KLARIFIKASI
+// ============================================
 app.get('/api/klarifikasi', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -187,17 +190,59 @@ app.get('/api/klarifikasi/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// ============================================
+// API RATING (GET & POST)
+// ============================================
 app.get('/api/rating/:id_berita', async (req, res) => {
   try {
-    const rows = await runQuery('SELECT COUNT(*) AS jumlah, COALESCE(SUM(nilai), 0) AS total FROM rating WHERE id_berita = ?', [req.params.id_berita]);
+    const rows = await runQuery(
+      'SELECT COUNT(*) AS jumlah, COALESCE(SUM(nilai), 0) AS total FROM rating WHERE id_berita = ?',
+      [req.params.id_berita]
+    );
     const r = rows[0] || { jumlah: 0, total: 0 };
     res.json({
-      jumlah: Number(r.jumlah), total: Number(r.total),
+      jumlah: Number(r.jumlah),
+      total: Number(r.total),
       rata: r.jumlah > 0 ? (Number(r.total) / Number(r.jumlah)).toFixed(1) : 0,
     });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
+app.post('/api/rating', async (req, res) => {
+  try {
+    const { id_berita, nilai } = req.body;
+    if (!id_berita || !nilai || nilai < 1 || nilai > 5) {
+      return res.status(400).json({ error: 'Data tidak valid' });
+    }
+
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+    await runQuery(
+      'INSERT INTO rating (id_berita, nilai, ip) VALUES (?, ?, ?)',
+      [id_berita, nilai, String(ip).slice(0, 45)]
+    );
+
+    const rows = await runQuery(
+      'SELECT COUNT(*) AS jumlah, COALESCE(SUM(nilai), 0) AS total FROM rating WHERE id_berita = ?',
+      [id_berita]
+    );
+    const r = rows[0] || { jumlah: 0, total: 0 };
+    res.json({
+      success: true,
+      jumlah: Number(r.jumlah),
+      total: Number(r.total),
+      rata: r.jumlah > 0 ? (Number(r.total) / Number(r.jumlah)).toFixed(1) : 0,
+    });
+  } catch (err) {
+    console.error('❌ POST /api/rating:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ============================================
+// API UPLOAD GAMBAR
+// ============================================
 app.post('/api/upload', upload.single('gambar'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Tidak ada file' });
@@ -207,6 +252,9 @@ app.post('/api/upload', upload.single('gambar'), async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// ============================================
+// START SERVER
+// ============================================
 if (process.env.NODE_ENV !== 'production') {
   const PORT = 5500;
   app.listen(PORT, () => console.log(`Server jalan di http://localhost:${PORT}`));
