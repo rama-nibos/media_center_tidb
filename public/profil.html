@@ -222,6 +222,17 @@
     </div>
   </footer>
 
+  <!-- AKSESIBILITAS DIPINDAHKAN KE SINI (SEBELUM SCRIPT) -->
+  <button id="a11yToggle" class="a11y-btn" aria-label="Buka menu aksesibilitas">♿</button>
+  <div id="a11yPanel" class="a11y-panel" style="display:none;">
+    <div class="a11y-header">Aksesibilitas</div>
+    <button onclick="ubahFontSize(1)" aria-label="Perbesar teks">🔍 Perbesar teks</button>
+    <button onclick="ubahFontSize(-1)" aria-label="Perkecil teks">🔎 Perkecil teks</button>
+    <button onclick="toggleKontras()" aria-label="Mode kontras tinggi">🌓 Kontras Tinggi</button>
+    <button onclick="bacakanHalaman()" aria-label="Bacakan halaman dengan suara">🔊 Baca Halaman</button>
+    <button onclick="resetA11y()" aria-label="Reset pengaturan">🔄 Reset</button>
+  </div>
+
   <script src="js/tidb.js"></script>
   <script>
     // ============================================
@@ -236,16 +247,12 @@
           e.preventDefault();
           const target = this.dataset.section;
 
-          // Update active sidebar
           items.forEach(i => i.classList.remove('active'));
           this.classList.add('active');
 
-          // Update active section
           sections.forEach(s => s.classList.remove('active'));
           const targetSection = document.getElementById('section-' + target);
           if (targetSection) targetSection.classList.add('active');
-          
-          // Auto-scroll sudah dihapus agar layar tidak melompat
         });
       });
     });
@@ -285,9 +292,6 @@
       localStorage.removeItem('a11yContrast');
     }
 
-    // ============================================
-    // MODE SUARA (Text-to-Speech)
-    // ============================================
     function bacakanHalaman() {
       if (!('speechSynthesis' in window)) {
         alert('Maaf, browser Anda tidak mendukung fitur baca suara.');
@@ -306,16 +310,5 @@
       window.speechSynthesis.speak(suara);
     }
   </script>
-
-  <!-- AKSESIBILITAS -->
-  <button id="a11yToggle" class="a11y-btn" aria-label="Buka menu aksesibilitas">♿</button>
-  <div id="a11yPanel" class="a11y-panel" style="display:none;">
-    <div class="a11y-header">Aksesibilitas</div>
-    <button onclick="ubahFontSize(1)" aria-label="Perbesar teks">🔍 Perbesar teks</button>
-    <button onclick="ubahFontSize(-1)" aria-label="Perkecil teks">🔎 Perkecil teks</button>
-    <button onclick="toggleKontras()" aria-label="Mode kontras tinggi">🌓 Kontras Tinggi</button>
-    <button onclick="bacakanHalaman()" aria-label="Bacakan halaman dengan suara">🔊 Baca Halaman</button>
-    <button onclick="resetA11y()" aria-label="Reset pengaturan">🔄 Reset</button>
-  </div>
 </body>
 </html>
